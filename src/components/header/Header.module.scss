@@ -1,0 +1,79 @@
+.header {
+  padding-block: 10px;
+  max-width: calc(1480px + 20px);
+  padding-inline: 10px;
+  margin-inline: auto;
+  position: relative;
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__pages {
+    &-link{
+      color: inherit;
+    }
+    &-list {
+      display: flex;
+      align-items: center;
+      gap: 55px;
+      color: $darkBrown;
+      &-item {
+        font-family: $openSans, sans-serif;
+        font-weight: 600;
+        font-size: 18px;
+      }
+    }
+  }
+
+  &__burger-btn{
+    position: relative;
+    width: 30px;
+    height: 20px;
+    div{
+      position: absolute;
+      width: 100%;
+      height: 3px;
+      background-color: $darkBrown;
+    }
+    div:nth-child(1){
+      top: 0;
+      left: 0;
+      transition: 0.3s ease-in-out;
+
+    }
+    div:nth-child(2){
+top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      transition: 0.3s ease-in-out;
+
+    }
+    div:nth-child(3){
+      top: 100%;
+      left: 0;
+      transform: translateY(-50%);
+      transition: 0.3s ease-in-out;
+
+    }
+    &--active{
+    div:nth-child(1){
+      top: 50%;
+            transform: translateY(-50%) rotate(45deg); // сначала в центр, потом поворот
+      transition: 0.3s ease-in-out;
+
+    }
+    div:nth-child(2){
+      opacity: 0;
+      transition: 0.3s ease-in-out;
+    }
+    div:nth-child(3){
+      top: 50%;
+            transform: translateY(-50%) rotate(-45deg); // сначала в центр, потом поворот
+      transition: 0.3s ease-in-out;
+
+
+    }
+    }
+  }
+}

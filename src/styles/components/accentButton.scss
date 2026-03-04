@@ -1,0 +1,22 @@
+.accent-button{
+    display: flex;
+    font-weight: 700;
+font-size: 20px;
+font-family: $openSansC;
+    padding: 15px 40px;
+    background-color: $orange;
+    
+    color: $mainWhite;
+        transition: background-color 0.3s ease-in-out;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover{
+        background-color: #FF7E2D;
+        transition: background-color 0.3s ease-in-out;
+    }
+    }
+    &:active{
+        background-color: #A64305;
+        transition: background-color 0.3s ease-in-out;
+    }
+}

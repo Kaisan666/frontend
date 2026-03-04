@@ -1,0 +1,32 @@
+.container{
+    max-width: 1400px;
+    padding-inline: 10px;
+    margin-inline: auto;
+    
+}
+body{
+    font-family: $openSans;
+    background-color: $mainWhite;
+}
+.catalog-layout{
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(275px, 1fr) );
+    gap: 20px;
+}
+.section-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 12px;
+    &__title{
+        font-size: 32px;
+        font-weight: 600;
+        color: $brown;
+    }
+    @media screen and (max-width: 764px) {
+        &__title{
+            font-size: 24px;
+        }
+    }
+}

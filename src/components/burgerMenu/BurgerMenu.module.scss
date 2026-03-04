@@ -1,0 +1,14 @@
+.burger-menu{
+    position: absolute;
+    left: -200%;
+    background-color: $orange;
+    transition: 0.3s ease-in-out;
+    width: 300px;
+    top: 100%;
+    z-index: 15;
+    &--active{
+    left: 0;
+    transition: 0.3s ease-in-out;
+    
+    }
+}
