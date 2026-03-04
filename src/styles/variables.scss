@@ -9,5 +9,5 @@ $accentColor: #C25917;
 
 
 
-$openSansC: "Open Sans Condensed";
-$openSans: "Open Sans";
+$openSansC: var(--font-open-sans-condensed);
+$openSans: var(--font-open-sans);
