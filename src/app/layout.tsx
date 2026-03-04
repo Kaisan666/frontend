@@ -16,6 +16,7 @@ const openSans = localFont({
     { path: './fonts/openSans/OpenSans-ExtraBold.woff2',weight: '800', style: 'normal' },
   ],
   variable: '--font-open-sans',
+  display: 'swap', adjustFontFallback: false
 })
 
 const openSansCondensed = localFont({
@@ -28,6 +29,7 @@ const openSansCondensed = localFont({
     { path: './fonts/openSans/OpenSansCondensed-ExtraBold.woff2',weight: '800', style: 'normal' },
   ],
   variable: '--font-open-sans-condensed',
+  display: 'swap', adjustFontFallback: false
 })
 
 const openSansSemiCondensed = localFont({
@@ -40,6 +42,7 @@ const openSansSemiCondensed = localFont({
     { path: './fonts/openSans/OpenSansSemiCondensed-ExtraBold.woff2',weight: '800', style: 'normal' },
   ],
   variable: '--font-open-sans-semi-condensed',
+  display: 'swap', adjustFontFallback: false
 })
 
 
