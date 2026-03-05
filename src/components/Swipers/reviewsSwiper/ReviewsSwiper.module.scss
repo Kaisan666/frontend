@@ -1,0 +1,9 @@
+.reviews-swiper {
+  &__slide {
+    display: flex;
+    flex-direction: column;
+    background-color: $mainWhite;
+    padding: 10px 20px;
+    border-radius: 30px;
+  }
+}

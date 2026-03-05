@@ -6,7 +6,8 @@
 }
 body{
     font-family: $openSans;
-    background-color: $mainWhite;
+    // background-color: $mainWhite;
+    background-color: $warmGray;
 }
 .catalog-layout{
     display: grid;
@@ -20,13 +21,13 @@ body{
     margin-bottom: 24px;
     gap: 12px;
     &__title{
-        font-size: 32px;
-        font-weight: 600;
+        font-size: 48px;
+        font-weight: 700;
         color: $brown;
     }
     @media screen and (max-width: 764px) {
         &__title{
-            font-size: 24px;
+            font-size: 32px;
         }
     }
 }

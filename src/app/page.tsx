@@ -4,6 +4,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { Hero } from "@/components/IndexPageSections/Hero";
 import { BeersMenu } from "@/components/IndexPageSections/BeersMenu";
 import { FoodMenu } from "@/components/IndexPageSections/FoodMenu";
+import { AboutUs } from "@/components/IndexPageSections/AboutUs";
 export default function Home() {
   return (
     <div className={`${styles["main-page"]}`}>
@@ -11,7 +12,7 @@ export default function Home() {
       <section className={styles["galery"]}></section>
       <BeersMenu></BeersMenu>
       <FoodMenu />
-      <section className={styles[""]}></section>
+      <AboutUs />
       {/* <ProductCard id={1} name="Пиво" price={1200} country="De" imgUrl="/images/123.jpg" measurementUnit="Мл" volume={300}></ProductCard> */}
     </div>
   );

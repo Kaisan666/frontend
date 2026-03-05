@@ -1,0 +1,41 @@
+.about-us{
+    &__content{
+
+    }
+    &__title{
+        font-style: italic;
+    }
+    &__features{
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-left: 6px;
+        &-item{
+            position: relative;
+            &::before{
+                content: "✦";
+                position: absolute;
+                top: 50%;
+                left: 0;
+                transform: translateY(-50%);
+            }
+            &-text{
+            margin-left: 16px;
+
+                font-size: 20px;
+                width: max-content;
+            }
+        }
+    }
+    &__main{
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+    }
+    &__content{
+
+    }
+    &__description{
+        font-size: 20px;
+    }
+}
