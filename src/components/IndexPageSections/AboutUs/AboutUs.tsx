@@ -15,9 +15,6 @@ export const AboutUs = () => {
         </h2>
       </div>
       <div className={`${styles["about-us__content"]} container`}>
-        {/* <h3 className={styles["about-us__catchphras"]}>
-          Место, где живёт настоящее пиво
-        </h3> */}
 
         <div className={styles["about-us__main"]}>
           <div className={styles["about-us__description"]}>
@@ -49,14 +46,14 @@ export const AboutUs = () => {
           </ul>
         </div>
       </div>
-      <div className={`${styles["about-us__comments"]} container`}>
-        <div className={styles["about-us__comments-title"]}>
-          <h3 className={styles["about-us__comments-title-text"]}>
+      <div className={`${styles["about-us__comments"]}`}>
+        <div className={`${styles["about-us__comments-title"]} container section-header`}>
+          <h3 className={`${styles["about-us__comments-title-text"]}`}>
             Что пишут о нас
           </h3>
+        </div>
           <ReviewSwiper reviews={reviews}>
           </ReviewSwiper>
-        </div>
       </div>
     </section>
   );

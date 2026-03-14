@@ -1,0 +1,62 @@
+.footer {
+  background-color: $darkBrown;
+  color: $mainWhite;
+  padding-block: 20px;
+  &__main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__contacts{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  &__info {
+    display: flex;
+    flex-direction: column;
+    &-item {
+      &-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    }
+  }
+  &__social {
+    display: flex;
+    gap: 20px;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: $mainWhite;
+      text-decoration: none;
+    }
+  }
+  &__maps{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    &-item{
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        justify-content: center;
+        align-items: center;
+        color: $mainWhite   ;
+
+        img, svg{
+            width: 45px;
+            height: 45px;
+            background-color: $accentColor;
+            padding: 5px;
+            border-radius: 100%;
+            fill: $mainWhite;
+            // stroke-width: 2;
+            stroke: $mainWhite;
+        }
+    }
+  }
+}

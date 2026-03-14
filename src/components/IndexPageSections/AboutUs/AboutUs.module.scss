@@ -38,4 +38,10 @@
     &__description{
         font-size: 20px;
     }
+    &__comments{
+        overflow: visible;
+        &-title{
+            font-size: 36px;
+        }
+    }
 }

@@ -4,6 +4,7 @@ import "@/styles/index.scss";
 import "@/styles/_reset.scss"
 
 import localFont from 'next/font/local'
+import { Footer } from "@/components/footer";
 
 const openSans = localFont({
   src: [
@@ -59,6 +60,7 @@ export default function RootLayout({
       <body>
       <Header></Header>
         {children}
+        <Footer></Footer>
       </body>
     </html>
   );

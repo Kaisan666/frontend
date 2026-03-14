@@ -18,21 +18,23 @@ interface ReviewSwiperProps {
 
 export const ReviewSwiper = ({ reviews }: ReviewSwiperProps) => {
   return (
-    <Swiper
+    <div className={`${styles['reviews-swiper__outer']}`}>
+      <Swiper
       modules={[Navigation, Pagination]}
       spaceBetween={24}
       slidesPerView={3}
-      className={styles.swiper}
+      className={`${styles.swiper} container`}
     >
       {reviews.map((review, index) => (
         <SwiperSlide key={index} className={styles['reviews-swiper__slide']}>
           <p>{review.text}</p>
-          <div className={styles['reviews-swiper__slider-footer']}>
+          <div className={styles['reviews-swiper__slide-footer']}>
             <span>{review.service}</span>
           <span>{review.date}</span>
           </div>
         </SwiperSlide>
       ))}
     </Swiper>
+    </div>
   );
 }
