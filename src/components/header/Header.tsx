@@ -9,7 +9,6 @@ import { BurgerMenu } from "../burgerMenu";
 
 
 
-
 export const Header = () => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -25,16 +24,16 @@ export const Header = () => {
       },
       { signal: signal },
     );
+    document.documentElement.style.overflow = isBurgerOpen ? 'hidden' : '';
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [isBurgerOpen]);
   
 
 
   const toggleBurgerMenu = () => {
     setIsBurgerOpen(!isBurgerOpen)
-
   }
 
   return (
@@ -72,7 +71,7 @@ export const Header = () => {
         )}
       </div>
       <BurgerMenu isOpen={isBurgerOpen}></BurgerMenu>
-      <Background isActive={isBurgerOpen} onClose={()=> setIsBurgerOpen(false)}></Background>
+      {/* <Background isActive={isBurgerOpen} onClose={()=> setIsBurgerOpen(false)}></Background> */}
     </header>
   );
 };

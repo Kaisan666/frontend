@@ -1,0 +1,51 @@
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 260px;
+  flex-shrink: 0;
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &__tag {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid $darkBrown;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &--active {
+      background-color: $orange;
+      border-color: $orange;
+      color: $mainWhite;
+    }
+  }
+
+  &__range {
+    width: 100%;
+    accent-color: $orange;
+  }
+
+  &__reset {
+    font-size: 14px;
+    color: $orange;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}

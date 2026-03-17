@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
     additionalData: `@import "@/styles/variables.scss";`,
 
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

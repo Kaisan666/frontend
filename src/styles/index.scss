@@ -2,12 +2,22 @@
     max-width: 1400px;
     padding-inline: 10px;
     margin-inline: auto;
+    width: 100%;
     
 }
 body{
     font-family: $openSans;
     // background-color: $mainWhite;
     background-color: $warmGray;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+main {
+  flex: 1; // занимает всё свободное пространство
 }
 .catalog-layout{
     display: grid;
@@ -30,4 +40,8 @@ body{
             font-size: 32px;
         }
     }
+}
+
+html:has(.burger-menu--active){
+    overflow: hidden;
 }
