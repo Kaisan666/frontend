@@ -11,9 +11,9 @@ export const Footer = () => {
     <footer className={styles["footer"]}>
       <div className={`${styles["footer__inner"]} container`}>
         <div className={styles["footer__main"]}>
-          <Link href="/">
+          {/* <Link href="/">
             <img src="" alt="логотип" />
-          </Link>
+          </Link> */}
           <div className={styles['footer__contacts']}>
             <ul className={styles["footer__info"]}>
             <li className={styles["footer__info-item"]}>

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { PortableText } from "@portabletext/react"
 import Image from "next/image"
 import { Background } from '@/components/Background'
-import { usePopup } from '@/context/PopupContext'
+import styles from "./EventPopupInfo.module.scss"
 const portableTextComponents = {
   types: {
     image: ({ value } : {value: any}) => (
@@ -12,18 +12,16 @@ const portableTextComponents = {
         alt={value.alt || ""}
         width={800}
         height={500}
+
       />
     ),
   },
 }
 
 
-export const eventPopupInfo = ({event, isOpened} : {event: any, isOpened: boolean}) => {
-  const {isOpen, setIsOpen} = usePopup()
-   
+export const EventPopupInfo = ({event} : {event: any}) => {
   return (
-    <div>
-      {isOpen && <div className="popup">
+      <div className={styles['event-info']}>
         <div key={event._id}>
           {event.imageUrl && (
             <Image
@@ -31,6 +29,7 @@ export const eventPopupInfo = ({event, isOpened} : {event: any, isOpened: boolea
               alt={event.title}
               width={800}
               height={400}
+              className={styles['event-info__img-preview']}
             />
           )}
           <h2>{event.title}</h2>
@@ -41,14 +40,9 @@ export const eventPopupInfo = ({event, isOpened} : {event: any, isOpened: boolea
             />
           )}
         </div>
+      </div>
         
-        </div>
-        
-        }
-      
-      <Background isActive={isOpen} onClose={() => setIsOpen(false)}/>
 
-    </div>
     
   )
 }

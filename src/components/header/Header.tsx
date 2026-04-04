@@ -9,13 +9,22 @@ import { BurgerMenu } from "../burgerMenu";
 
 
 
+
+// const categories = await client.fetch(`{
+//   "styles": array::unique(*[_type == "product" && category == "beer"].style),
+//   "country": array::unique(*[_type == "product" && category == "beer"].country),
+//   "abv": array::unique(*[_type == "product" && category == "beer"].abv),
+//   "ibu": array::unique(*[_type == "product" && category == "beer"].ibu),
+// }`)
+
+
 export const Header = () => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
-    const signal = controller.signal;
+    const signal = controller.signal; 
     setIsMobile(window.innerWidth < 1024)
     window.addEventListener(
       "resize",

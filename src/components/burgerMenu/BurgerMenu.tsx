@@ -1,4 +1,5 @@
-import React from 'react'
+"use client"
+import React, {useEffect, useState} from 'react'
 import styles from "./BurgerMenu.module.scss"
 import Link from "next/link";
 import { navLinks } from "@/app/data/Link";
@@ -12,8 +13,15 @@ type Props = {
 
 
 export const BurgerMenu = ({isOpen}: Props) => {
-  return (
-    createPortal(
+   const [isMounted, setIsMounted] = useState(false);
+   useEffect(() => {
+     setIsMounted(true);
+   }, []);
+
+   if (!isMounted) {
+     return null;
+   }
+  return createPortal(
         <div className={`${styles['burger-menu']} ${isOpen ? styles["burger-menu--active"] : ""}`} >
         <nav className={styles['burger-menu__nav']}>
             <ul className={styles['burger-menu__list']}>
@@ -54,5 +62,4 @@ export const BurgerMenu = ({isOpen}: Props) => {
         </div>
     </div>, document.body
     )
-  )
 }

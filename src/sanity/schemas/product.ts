@@ -1,3 +1,4 @@
+import { NumberRule } from 'sanity'
 export default {
   name: 'product',
   title: 'Товар',
@@ -17,7 +18,9 @@ export default {
     },
     { name: 'name', title: 'Название', type: 'string' },
     { name: 'price', title: 'Цена', type: 'number' },
-    { name: 'image', title: 'Фото', type: 'image' },
+    { name: 'image', title: 'Фото', type: 'image', options: {
+    accept: 'image/*'   // только картинки
+  } },
     { name: 'description', title: 'Описание', type: 'text' },
     { name: 'quantity', title: 'Количество', type: 'number' },
     {
@@ -26,9 +29,9 @@ export default {
       type: 'string',
       options: {
         list: [
-          { title: 'мл', value: 'ml' },
-          { title: 'г', value: 'g' },
-          { title: 'шт', value: 'pcs' },
+          { title: 'мл', value: 'мл' },
+          { title: 'гр', value: 'гр' },
+          { title: 'шт', value: 'шт' },
         ]
       }
     },
@@ -37,6 +40,10 @@ export default {
     { name: 'country', title: 'Страна', type: 'string', hidden: ({ document }: any) => document?.category !== 'beer' },
     { name: 'abv', title: 'Крепость (ABV)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer' },
     { name: 'ibu', title: 'Горечь (IBU)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer' },
+    { name: 'pl', title: 'Плотность (PL)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer', validation: (rule : NumberRule) => [
+  rule.min(0).error('IBU не может быть меньше 0'),
+  rule.max(120).error('IBU не может быть больше 120'),
+] },
     {
   name: 'slug',
   title: 'Slug',

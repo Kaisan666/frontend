@@ -1,0 +1,30 @@
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11;
+    background-color: $mainWhite;
+    border-radius: 8px;
+    padding: 24px;
+    width: 90%;
+    max-height: 90dvh;
+    overflow-y: auto;
+
+    &__close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 100px;
+        line-height: 1;
+        color: $brown;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+            color: $orange;
+        }
+    }
+}

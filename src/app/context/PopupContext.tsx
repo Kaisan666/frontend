@@ -2,7 +2,12 @@
 
 import { createContext, useContext, useState } from "react"
 
-const PopupContext = createContext(null)
+type PopupContextType = {
+  isOpen: boolean
+  setIsOpen: (value: boolean) => void
+}
+
+const PopupContext = createContext<PopupContextType | null>(null)
 
 export const PopupProvider = ({ children } : {children: React.ReactNode}) => {
   const [isOpen, setIsOpen] = useState(false)

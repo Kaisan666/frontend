@@ -1,0 +1,14 @@
+.event-info{
+    &__img-preview{
+        border-radius: 8px;
+        margin-bottom: 16px;
+        aspect-ratio: 16/9;
+        object-fit: cover;
+        width: 100%;
+        object-position: top;
+    }
+    h2{
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+}

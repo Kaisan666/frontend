@@ -12,6 +12,9 @@ import { PopupProvider } from "@/app/context/PopupContext"
 
 import { client } from "@/sanity/lib/client"
 import EventButton from "@/components/EventButton/EventButton";
+import { Info } from "lucide-react";
+import { EventPopupInfo } from "@/components/EventPopup/EventPopupInfo";
+import Popup from "@/components/Popup/Popup";
 
 const events = await client.fetch(`*[_type == "event"]{
     _id,
@@ -26,6 +29,8 @@ const events = await client.fetch(`*[_type == "event"]{
       }
     }
   }`)
+
+// import { client } from "@/sanity/lib/client"
 
 
 
@@ -85,8 +90,13 @@ export default function MainLayout({
           <Header></Header>
           <main>
             {children}
-        <EventButton></EventButton>
+        {events.length > 0 && (
+          <EventButton></EventButton>
+        )}
           </main>
+          <Popup >
+            <EventPopupInfo event={events[0]} />
+          </Popup>
           <Footer></Footer>
         </PopupProvider>
       </body>
