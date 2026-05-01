@@ -9,6 +9,11 @@ export type Product = {
   category: "beer" | "food" | "other";
   price: number;
   description?: string;
+  ingredients?: string;
+  calories?: number;
+  protein?: number;
+  fat?: number;
+  carbs?: number;
   quantity: number;
   unit: "ml" | "g" | "pcs";
   slug: string;

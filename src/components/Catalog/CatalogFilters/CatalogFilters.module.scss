@@ -2,8 +2,12 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  width: 260px;
   flex-shrink: 0;
+  max-width: 250px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 
   &__group {
     display: flex;
@@ -24,11 +28,11 @@
 
   &__tag {
     padding: 6px 14px;
-    border-radius: 20px;
     border: 1px solid $darkBrown;
     font-size: 14px;
     cursor: pointer;
     transition: 0.2s;
+    background: none;
 
     &--active {
       background-color: $orange;
@@ -46,6 +50,117 @@
     font-size: 14px;
     color: $orange;
     text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+  }
+}
+
+// Mobile trigger button
+.filters-mobile {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    margin-bottom: 16px;
+  }
+
+  &__btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid $darkBrown;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    background: none;
+    transition: 0.2s;
+
+    &--active {
+      background-color: $orange;
+      border-color: $orange;
+      color: $mainWhite;
+    }
+  }
+}
+
+// Drawer
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  &__panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: $mainWhite;
+    border-radius: 24px 24px 0 0;
+    max-height: 80dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid $warmGray;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $darkBrown;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: $brown;
+    line-height: 1;
+    padding: 4px;
+  }
+
+  &__content {
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    flex: 1;
+  }
+
+  &__footer {
+    padding: 16px 20px;
+    border-top: 1px solid $warmGray;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  &__apply {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background-color: $orange;
+    color: $mainWhite;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
   }
 }

@@ -22,7 +22,7 @@ export const ReviewSwiper = ({ reviews }: ReviewSwiperProps) => {
       <Swiper
       modules={[Navigation, Pagination]}
       spaceBetween={24}
-      slidesPerView={3}
+      slidesPerView={"auto"}
       className={`${styles.swiper} container`}
     >
       {reviews.map((review, index) => (

@@ -16,6 +16,9 @@ import { Info } from "lucide-react";
 import { EventPopupInfo } from "@/components/EventPopup/EventPopupInfo";
 import Popup from "@/components/Popup/Popup";
 
+import Script from 'next/script'
+import YandexMetrika from "../modules/YandexMetrika";
+
 const events = await client.fetch(`*[_type == "event"]{
     _id,
     title,
@@ -78,7 +81,9 @@ const openSansSemiCondensed = localFont({
 
 
 
-export default function MainLayout({
+export default function MainLayout(
+  
+  {
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -87,6 +92,7 @@ export default function MainLayout({
     <html lang="en" className={`${openSans.variable} ${openSansCondensed.variable}`}>
       <body>
         <PopupProvider>
+
           <Header></Header>
           <main>
             {children}
@@ -99,6 +105,7 @@ export default function MainLayout({
           </Popup>
           <Footer></Footer>
         </PopupProvider>
+        <YandexMetrika/>
       </body>
     </html>
   );

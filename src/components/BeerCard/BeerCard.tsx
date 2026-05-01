@@ -2,7 +2,17 @@
 import React from 'react'
 import styles from "../productCard/ProductsCard.module.scss"
 import Link from 'next/link'
-import { Beer } from '@/types/product'
+type Beer = {
+  id: number
+  name: string
+  price: number
+  image: string
+  country?: string
+  volume?: number
+  description?: string
+  abv?: number
+  style?: string
+}
 
 export const BeerCard = ({ id, name, price, image, country, volume, description, abv, style }: Beer) => {
   return (

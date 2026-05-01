@@ -35,6 +35,13 @@ export default {
         ]
       }
     },
+    // только еда
+    { name: 'ingredients', title: 'Состав', type: 'text', hidden: ({ document }: any) => document?.category !== 'food' },
+    // питательная ценность
+    { name: 'calories', title: 'Калорийность (ккал)', type: 'number' },
+    { name: 'protein', title: 'Белки (г)', type: 'number' },
+    { name: 'fat', title: 'Жиры (г)', type: 'number' },
+    { name: 'carbs', title: 'Углеводы (г)', type: 'number' },
     // только пиво
     { name: 'style', title: 'Стиль', type: 'string', hidden: ({ document }: any) => document?.category !== 'beer' },
     { name: 'country', title: 'Страна', type: 'string', hidden: ({ document }: any) => document?.category !== 'beer' },

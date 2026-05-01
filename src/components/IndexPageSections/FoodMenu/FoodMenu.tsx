@@ -76,19 +76,18 @@ export const FoodMenu = () => {
         </Link>
       </div>
       <div className="catalog-layout">
-        {foods.map( food => (
-             <ProductCard
-          id={food.id}
-          name={food.name}
-          price={food.price}
-          type="food"
-          country=""
-          description=""
-          imgUrl={food.imgUrl}
-          key={food.id}
-          measurementUnit={food.measurementUnit}
-          volume={food.volume}
-        ></ProductCard>
+        {foods.map(food => (
+          <ProductCard
+            key={food.id}
+            id={String(food.id)}
+            name={food.name}
+            price={food.price}
+            category="food"
+            imageUrl={food.imgUrl}
+            quantity={food.volume}
+            unit="ml"
+            slug=""
+          />
         ))}
       </div>
     </section>

@@ -137,7 +137,19 @@ export const BeersMenu = () => {
         </div>
         <div className='catalog-layout'>
         {beers.map(beer => (
-            <ProductCard type='beer' key={beer.id} name={beer.name} price={beer.price} country={beer.country} description={beer.description} imgUrl={beer.imgUrl} id={beer.id} measurementUnit={beer.measurementUnit} volume={beer.volume}></ProductCard>
+            <ProductCard
+              key={beer.id}
+              id={String(beer.id)}
+              name={beer.name}
+              price={beer.price}
+              category="beer"
+              country={beer.country}
+              description={beer.description}
+              imageUrl={beer.imgUrl}
+              quantity={beer.volume}
+              unit="ml"
+              slug=""
+            />
         ))}
         </div>
     </section>

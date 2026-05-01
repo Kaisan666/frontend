@@ -1,49 +1,211 @@
 import React from "react";
 import { client } from "@/sanity/lib/client";
 import { Product } from "@/types/product";
+import { ProductCard } from "@/components/ProductCard";
+import { notFound } from "next/navigation";
+import styles from "./page.module.scss";
+import Link from "next/link";
+import ProductMetric from "@/app/modules/ProductMetric";
+
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
-import styles from "./page.module.scss";
-import Link from "next/link";
+
 export default async function ProductPage({ params }: PageProps) {
-  console.log(await params);
   const { slug } = await params;
-  console.log(slug);
-  const product: Product = await client.fetch(
+
+  const product: Product | null = await client.fetch(
     `*[_type == "product" && slug.current == $slug][0]{
-        ...,
-        "imageUrl": image.asset->url,
-  }`,
+      ...,
+      "imageUrl": image.asset->url
+    }`,
     { slug },
   );
-  console.log(product);
+
+  if (!product) {
+    notFound();
+  }
+
+  const isBeer = product.category === "beer";
+
+  const similarProducts: Product[] = await client.fetch(
+    `*[_type == "product" && slug.current != $slug && (style == $style || category == $category)][0...4]{
+      ...,
+      "id": _id,
+      "imageUrl": image.asset->url,
+      "slug": slug.current
+    }`,
+    {
+      slug,
+      style: product.style ?? "",
+      category: product.category,
+    },
+  );
 
   return (
-    <div className={styles["product-detail"]}>
+    <>
+    <div className={`${styles["product-detail"]} container`}>
+      <Link href="/catalog" className={styles["product-detail__back"]}>
+        &larr; Назад в каталог
+      </Link>
+
       <div className={styles["product-detail__content"]}>
         <div className={styles["product-detail__media"]}>
-          <img src={product.imageUrl} alt={product.slug} />
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className={styles["product-detail__media-img"]}
+          />
         </div>
-        <div className={styles["product-detail__info"]}>
-            <div className={styles['product-detail__info-header']}>
-                <h2 className={styles['product-detail__info-name']}>
-                    {product.name}
-                </h2>
-                {product.country && (
-                    <Link href={`/catalog?country=${product.country}`}  className={styles['product-detail__info-country']}>
-                    {product.country}
-                </Link>
-                )}
-                {product.price && (
-                    <p className={styles['product-detail__info-price']}>
-                    {product.price}
-                </p>
-                )}
-            </div>
 
+        <div className={styles["product-detail__info"]}>
+          <h1 className={styles["product-detail__name"]}>{product.name}</h1>
+
+          {isBeer && (product.style || product.country) && (
+            <p className={styles["product-detail__subtitle"]}>
+              {product.style}
+              {product.style && product.country && " · "}
+              {product.country && (
+                <Link href={`/catalog?country=${product.country}`}>
+                  {product.country}
+                </Link>
+              )}
+            </p>
+          )}
+
+          {isBeer && (
+            <div className={styles["product-detail__specs"]}>
+              {product.abv != null && (
+                <div className={styles["product-detail__spec"]}>
+                  <span className={styles["product-detail__spec-label"]}>
+                    Крепость (ABV)
+                  </span>
+                  <span className={styles["product-detail__spec-value"]}>
+                    {product.abv}%
+                  </span>
+                </div>
+              )}
+              {product.ibu != null && (
+                <div className={styles["product-detail__spec"]}>
+                  <span className={styles["product-detail__spec-label"]}>
+                    Горечь (IBU)
+                  </span>
+                  <span className={styles["product-detail__spec-value"]}>
+                    {product.ibu}
+                  </span>
+                </div>
+              )}
+              {product.pl != null && (
+                <div className={styles["product-detail__spec"]}>
+                  <span className={styles["product-detail__spec-label"]}>
+                    Плотность (PL)
+                  </span>
+                  <span className={styles["product-detail__spec-value"]}>
+                    {product.pl}
+                  </span>
+                </div>
+              )}
+              {product.quantity != null && product.unit && (
+                <div className={styles["product-detail__spec"]}>
+                  <span className={styles["product-detail__spec-label"]}>
+                    Объём
+                  </span>
+                  <span className={styles["product-detail__spec-value"]}>
+                    {product.quantity} {product.unit}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {!isBeer && product.quantity != null && product.unit && (
+            <p className={styles["product-detail__volume"]}>
+              {product.quantity} {product.unit}
+            </p>
+          )}
+
+          <p className={styles["product-detail__price"]}>
+            {product.price} ₽
+          </p>
+
+          {(product.calories != null || product.protein != null || product.fat != null || product.carbs != null) && (
+            <div className={styles["product-detail__specs"]}>
+              {product.calories != null && (
+                <div className={styles["product-detail__spec"]}>
+                  <span className={styles["product-detail__spec-label"]}>Калорийность</span>
+                  <span className={styles["product-detail__spec-value"]}>{product.calories} ккал</span>
+                </div>
+              )}
+              {product.protein != null && (
+                <div className={styles["product-detail__spec"]}>
+                  <span className={styles["product-detail__spec-label"]}>Белки</span>
+                  <span className={styles["product-detail__spec-value"]}>{product.protein} г</span>
+                </div>
+              )}
+              {product.fat != null && (
+                <div className={styles["product-detail__spec"]}>
+                  <span className={styles["product-detail__spec-label"]}>Жиры</span>
+                  <span className={styles["product-detail__spec-value"]}>{product.fat} г</span>
+                </div>
+              )}
+              {product.carbs != null && (
+                <div className={styles["product-detail__spec"]}>
+                  <span className={styles["product-detail__spec-label"]}>Углеводы</span>
+                  <span className={styles["product-detail__spec-value"]}>{product.carbs} г</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
+
+      {product.description && (
+        <div className={styles["product-detail__description"]}>
+          <h2 className={styles["product-detail__description-title"]}>
+            Описание
+          </h2>
+          <p className={styles["product-detail__description-text"]}>
+            {product.description}
+          </p>
+        </div>
+      )}
+
+      {product.ingredients && (
+        <div className={styles["product-detail__description"]}>
+          <h2 className={styles["product-detail__description-title"]}>
+            Состав
+          </h2>
+          <p className={styles["product-detail__description-text"]}>
+            {product.ingredients}
+          </p>
+        </div>
+      )}
+
+      {similarProducts.length > 0 && (
+        <section className={styles["product-detail__similar"]}>
+          <div className="section-header">
+            <h2 className="section-header__title">Похожие товары</h2>
+          </div>
+          <div className="catalog-layout">
+            {similarProducts.map((p) => (
+              <ProductCard
+                key={p.id}
+                id={p.id}
+                name={p.name}
+                price={p.price}
+                category={p.category}
+                imageUrl={p.imageUrl}
+                country={p.country}
+                unit={p.unit}
+                quantity={p.quantity}
+                slug={p.slug}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
+    <ProductMetric name={product.name} category={product.category} price={product.price}/>
+    </>
   );
 }

@@ -1,0 +1,136 @@
+.about {
+  padding-bottom: 80px;
+
+  &__hero {
+    padding-block: 48px 40px;
+
+    &_title {
+      font-size: 48px;
+      font-weight: 700;
+      font-style: italic;
+      color: $brown;
+      margin-bottom: 20px;
+      max-width: 760px;
+      line-height: 1.2;
+    }
+
+    &_text {
+      font-size: 20px;
+      line-height: 1.7;
+      color: $darkBrown;
+      max-width: 680px;
+    }
+
+    @media screen and (max-width: 764px) {
+      padding-block: 32px 28px;
+
+      &_title {
+        font-size: 32px;
+      }
+
+      &_text {
+        font-size: 17px;
+      }
+    }
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 56px;
+
+    @media screen and (max-width: 764px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__stat {
+    background-color: $mainWhite;
+    border-radius: 20px;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+
+    &_value {
+      font-size: 42px;
+      font-weight: 700;
+      color: $accentColor;
+      line-height: 1;
+    }
+
+    &_label {
+      font-size: 15px;
+      color: $brown;
+      font-weight: 500;
+    }
+  }
+
+  &__section_title {
+    font-size: 36px;
+    font-weight: 700;
+    color: $brown;
+    margin-bottom: 28px;
+
+    @media screen and (max-width: 764px) {
+      font-size: 26px;
+    }
+  }
+
+  &__features {
+    margin-bottom: 64px;
+
+    &_grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+
+      @media screen and (max-width: 764px) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  &__feature {
+    background-color: $mainWhite;
+    border-radius: 20px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &_icon {
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: $warmGray;
+      border-radius: 14px;
+      color: $accentColor;
+    }
+
+    &_title {
+      font-size: 19px;
+      font-weight: 700;
+      color: $darkBrown;
+    }
+
+    &_text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: $brown;
+    }
+  }
+
+  &__reviews {
+    overflow: hidden;
+
+    &_header {
+      margin-bottom: 16px;
+    }
+  }
+}

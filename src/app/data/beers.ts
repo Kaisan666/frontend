@@ -1,5 +1,26 @@
-// app/data/products.ts
-import { Beer, Food, Product } from '@/types/product';
+type Beer = {
+  id: number
+  category: 'beer'
+  name: string
+  style: string
+  country: string
+  abv: number
+  ibu: number
+  volume: number
+  price: number
+  image: string
+  description: string
+}
+
+type Food = {
+  id: number
+  category: 'food'
+  name: string
+  weight: number
+  price: number
+  image: string
+  description: string
+}
 
 export const beers: Beer[] = [
   {
@@ -197,7 +218,7 @@ export const beers: Beer[] = [
     image: '/images/beers/stone-ipa.jpg',
     description: 'Агрессивный американский IPA с горьким хмелевым характером и цитрусом',
   },
-];
+]
 
 export const foods: Food[] = [
   { id: 16, category: 'food', name: 'Сырная тарелка', weight: 250, price: 490, image: '/images/food/cheese.jpg', description: 'Ассорти из 5 сортов сыра с мёдом и орехами' },
@@ -205,38 +226,37 @@ export const foods: Food[] = [
   { id: 18, category: 'food', name: 'Картофель фри', weight: 200, price: 220, image: '/images/food/fries.jpg', description: 'Хрустящий картофель с соусом на выбор' },
   { id: 19, category: 'food', name: 'Крылья BBQ', weight: 400, price: 450, image: '/images/food/wings.jpg', description: 'Куриные крылья в соусе барбекю с овощами' },
   { id: 20, category: 'food', name: 'Брускетта', weight: 180, price: 290, image: '/images/food/bruschetta.jpg', description: 'Хрустящий хлеб с томатами, базиликом и оливковым маслом' },
-];
+]
 
 export const fetchProducts = (filters?: {
-  category?: 'beer' | 'food';
-  style?: string;
-  country?: string;
-  volume?: number;
-  abvMax?: number;
-  priceMax?: number;
-}): Product[] => {
-  // Выбираем нужный массив по категории
-  let result: Product[] = filters?.category === 'food' ? foods : beers;
+  category?: 'beer' | 'food'
+  style?: string
+  country?: string
+  volume?: number
+  abvMax?: number
+  priceMax?: number
+}): (Beer | Food)[] => {
+  let result: (Beer | Food)[] = filters?.category === 'food' ? foods : beers
 
   if (filters?.style) {
-    result = result.filter(p => p.category === 'beer' && p.style === filters.style);
+    result = result.filter(p => p.category === 'beer' && (p as Beer).style === filters.style)
   }
 
   if (filters?.country) {
-    result = result.filter(p => p.category === 'beer' && p.country === filters.country);
+    result = result.filter(p => p.category === 'beer' && (p as Beer).country === filters.country)
   }
 
   if (filters?.volume !== undefined) {
-    result = result.filter(p => p.category === 'beer' && p.volume === filters.volume);
+    result = result.filter(p => p.category === 'beer' && (p as Beer).volume === filters.volume)
   }
 
   if (filters?.abvMax !== undefined) {
-    result = result.filter(p => p.category === 'beer' && p.abv <= filters.abvMax!);
+    result = result.filter(p => p.category === 'beer' && (p as Beer).abv <= filters.abvMax!)
   }
 
   if (filters?.priceMax !== undefined) {
-    result = result.filter(p => p.price <= filters.priceMax!);
+    result = result.filter(p => p.price <= filters.priceMax!)
   }
 
-  return result;
-};
+  return result
+}

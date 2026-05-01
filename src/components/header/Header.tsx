@@ -79,7 +79,7 @@ export const Header = () => {
           <Link href="/booking" className="accent-button">Забронировать</Link>
         )}
       </div>
-      <BurgerMenu isOpen={isBurgerOpen}></BurgerMenu>
+      <BurgerMenu isOpen={isBurgerOpen} toggleBurger={toggleBurgerMenu}></BurgerMenu>
       {/* <Background isActive={isBurgerOpen} onClose={()=> setIsBurgerOpen(false)}></Background> */}
     </header>
   );

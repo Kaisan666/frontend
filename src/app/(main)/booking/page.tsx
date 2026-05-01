@@ -5,7 +5,7 @@ import Image from "next/image"
 // просто переменная с настройками — не компонент
 const portableTextComponents = {
   types: {
-    image: ({ value }) => (
+    image: ({ value } : {value : any}) => (
       <Image
         src={value.asset.url}
         alt={value.alt || ""}
@@ -33,7 +33,7 @@ const page = async () => {
 
   return (
     <div>
-      {events.map((event) => (
+      {events.map((event: any) => (
         <div key={event._id}>
           {event.imageUrl && (
             <Image

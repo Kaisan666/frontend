@@ -1,0 +1,160 @@
+.contacts {
+  padding-block: 40px 80px;
+
+  &__title {
+    font-size: 48px;
+    font-weight: 700;
+    color: $brown;
+    margin-bottom: 40px;
+
+    @media screen and (max-width: 764px) {
+      font-size: 32px;
+      margin-bottom: 28px;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+
+    @media screen and (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__block {
+    background-color: $mainWhite;
+    border-radius: 20px;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: $darkBrown;
+    }
+
+    p {
+      font-size: 16px;
+      color: $brown;
+      line-height: 1.6;
+    }
+
+    &_header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: $accentColor;
+
+      h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: $darkBrown;
+      }
+    }
+  }
+
+  &__phone {
+    font-size: 20px;
+    font-weight: 600;
+    color: $accentColor;
+    transition: color 0.2s;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: $orange;
+      }
+    }
+  }
+
+  &__social_title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $darkBrown;
+    margin-bottom: 4px;
+  }
+
+  &__social {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__social_link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: $brown;
+    transition: color 0.2s;
+
+    svg {
+      color: $accentColor;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: $accentColor;
+      }
+    }
+  }
+
+  &__maps {
+    background-color: $mainWhite;
+    border-radius: 20px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-self: start;
+  }
+
+  &__maps_title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $darkBrown;
+  }
+
+  &__maps_list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__map_btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1.5px solid $warmGray;
+    font-size: 16px;
+    font-weight: 500;
+    color: $darkBrown;
+    transition: border-color 0.2s, color 0.2s;
+
+    img {
+      border-radius: 50%;
+      background-color: $accentColor;
+      padding: 5px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        border-color: $accentColor;
+        color: $accentColor;
+      }
+    }
+  }
+}

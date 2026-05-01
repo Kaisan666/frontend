@@ -1,1 +1,1 @@
-export {CatalogTabs} from "./CatalogTabs"
+export { default as CatalogTabs } from "./CatalogTabs"

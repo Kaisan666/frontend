@@ -1,0 +1,10 @@
+.catalog {
+  display: flex;
+  gap: 32px;
+  padding-block: 40px;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}

@@ -8,11 +8,12 @@ import { Phone } from "lucide-react";
 import { createPortal } from 'react-dom';
 
 type Props = {
-    isOpen: boolean
+    isOpen: boolean,
+    toggleBurger : Function
 }
 
 
-export const BurgerMenu = ({isOpen}: Props) => {
+export const BurgerMenu = ({isOpen, toggleBurger}: Props) => {
    const [isMounted, setIsMounted] = useState(false);
    useEffect(() => {
      setIsMounted(true);
@@ -26,11 +27,11 @@ export const BurgerMenu = ({isOpen}: Props) => {
         <nav className={styles['burger-menu__nav']}>
             <ul className={styles['burger-menu__list']}>
                 <li className={styles['burger-menu__list-item']} >
-                    <Link className={styles['burger-menu__list-item-link']} href="/">Главная</Link>
+                    <Link onClick={() => toggleBurger()} className={styles['burger-menu__list-item-link']} href="/">Главная</Link>
                     </li>
                 {navLinks.map(({label, href}) => (
                 <li className={styles['burger-menu__list-item']} key={label}>
-                    <Link className={styles['burger-menu__list-item-link']} href={href}>{label}</Link>
+                    <Link onClick={() => toggleBurger()} className={styles['burger-menu__list-item-link']} href={href}>{label}</Link>
                     </li>
                 ))}
             </ul>

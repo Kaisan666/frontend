@@ -5,7 +5,7 @@ import { Background } from '@/components/Background/Background'
 import styles from "./Popup.module.scss"
 
 const Popup = ({ children }: { children: React.ReactNode }) => {
-    const { isOpen, setIsOpen } = usePopup()
+    const { isOpen, setIsOpen } = usePopup()!
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
