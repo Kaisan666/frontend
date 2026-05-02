@@ -1,22 +1,10 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Header.module.scss";
 import { navLinks } from "@/app/data/Link";
 import "@/styles/components/accentButton.scss";
-import { Background } from "../Background";
 import Link from "next/link";
 import { BurgerMenu } from "../burgerMenu";
-
-
-
-
-// const categories = await client.fetch(`{
-//   "styles": array::unique(*[_type == "product" && category == "beer"].style),
-//   "country": array::unique(*[_type == "product" && category == "beer"].country),
-//   "abv": array::unique(*[_type == "product" && category == "beer"].abv),
-//   "ibu": array::unique(*[_type == "product" && category == "beer"].ibu),
-// }`)
-
 
 export const Header = () => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
@@ -65,22 +53,31 @@ export const Header = () => {
         )}
 
         {isMobile ? (
-          <button
-            className={`${styles['header__burger-btn']} ${isBurgerOpen ? styles['header__burger-btn--active'] : ""}`}
-            onClick={() => {
-              toggleBurgerMenu();
-            }}
-          >
-            <div></div>
-            <div></div>
-            <div></div>
-          </button>
+          <div className={styles['header__mobile-actions']}>
+            <a
+              href="https://taplink.cc/shengenplus"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="accent-button accent-button--compact"
+            >
+              Забронировать
+            </a>
+            <button
+              className={`${styles['header__burger-btn']} ${isBurgerOpen ? styles['header__burger-btn--active'] : ""}`}
+              onClick={() => {
+                toggleBurgerMenu();
+              }}
+            >
+              <div></div>
+              <div></div>
+              <div></div>
+            </button>
+          </div>
         ) : (
-          <Link href="/booking" className="accent-button">Забронировать</Link>
+          <a href="https://taplink.cc/shengenplus" target="_blank" rel="noopener noreferrer" className="accent-button">Забронировать</a>
         )}
       </div>
       <BurgerMenu isOpen={isBurgerOpen} toggleBurger={toggleBurgerMenu}></BurgerMenu>
-      {/* <Background isActive={isBurgerOpen} onClose={()=> setIsBurgerOpen(false)}></Background> */}
     </header>
   );
 };

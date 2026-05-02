@@ -1,0 +1,82 @@
+.event-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 10;
+
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+
+  background-color: $orange;
+  color: $mainWhite;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.18s ease-in-out, box-shadow 0.18s ease-in-out;
+
+  &:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $yellow;
+    outline-offset: 2px;
+  }
+
+  &__badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+
+    background-color: $yellow;
+    color: $brown;
+
+    font-family: $openSans;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+
+    box-shadow: 0 0 0 2px $mainWhite;
+    animation: event-fab-pulse 3s ease-in-out infinite;
+  }
+
+  @media (max-width: 764px) {
+    right: 14px;
+    bottom: 14px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@keyframes event-fab-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px $mainWhite, 0 0 0 0 rgba(223, 190, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 2px $mainWhite, 0 0 0 5px rgba(223, 190, 55, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .event-fab__badge {
+    animation: none;
+  }
+}

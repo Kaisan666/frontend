@@ -41,5 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 
-CLAUDE.MD
+# Claude Code workspace files
+CLAUDE.md
 PROJECT_ANALYSIS.md
+/tasks/

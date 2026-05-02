@@ -14,8 +14,8 @@ export type Product = {
   protein?: number;
   fat?: number;
   carbs?: number;
-  quantity: number;
-  unit: "ml" | "g" | "pcs";
+  quantity?: number;
+  unit?: "мл" | "гр" | "шт";
   slug: string;
   imageUrl?: string
 }

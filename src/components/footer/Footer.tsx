@@ -4,7 +4,7 @@ import styles from "./Footer.module.scss";
 import Link from "next/link";
 import { MapPin, Clock, Phone } from "lucide-react";
 import { FaVk, FaTelegram, FaWhatsapp } from 'react-icons/fa';
-import { SiGooglemaps } from 'react-icons/si';
+// import { SiGooglemaps } from 'react-icons/si';
 
 export const Footer = () => {
   return (
@@ -61,20 +61,20 @@ export const Footer = () => {
         </div>
         
         <div className={styles["footer__maps"]}>
-          <a href="" target="_blank" className={styles['footer__maps-item']}>
+          <a href="https://yandex.com/maps/-/CPS~zNni" target="_blank" className={styles['footer__maps-item']}>
             <img src="/icons/yaMaps.svg"  alt="я.карты"  />
             Яндекс.Карты
           </a>
-          <a href="" target="_blank" className={styles['footer__maps-item']}>
+          <a href="https://2gis.ru/krasnodar/firm/70000001064246130" target="_blank" className={styles['footer__maps-item']}>
             <img src="/icons/2gis.svg" alt="2ГИС"/>
 
             2ГИС
           </a>
-          <a href="" target="_blank" className={styles['footer__maps-item']}>
+          {/* <a href="" target="_blank" className={styles['footer__maps-item']}>
             <SiGooglemaps size={40} />
 
             Google Maps
-          </a>
+          </a> */}
         </div>
       </div>
     </footer>

@@ -1,19 +1,6 @@
 import React from 'react'
 import styles from "./ProductsCard.module.scss"
 import Link from 'next/link'
-// type Props = {
-//     id: number
-//     name: string,
-//     price: number,
-//     imgUrl?: string;
-//     // isAvailable: boolean;
-//     description?: string;
-//     country?: string;
-//     volume?: number;
-//     measurementUnit?: string;
-//     // category: "food" | "beer" | ;
-// }
-
 import { Product } from '@/types/product'
 
 export const ProductCard = ({category, imageUrl, unit, name, price, quantity, abv, country, slug, description, ibu, style} : Product) => {

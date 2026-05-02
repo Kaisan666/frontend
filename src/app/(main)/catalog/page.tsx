@@ -43,12 +43,22 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
   const params = await searchParams
   let filteredProducts: Product[] = products
 
+  const splitTokens = (raw?: string) =>
+    (raw ?? "")
+      .split(/[,\/]/)
+      .map(s => s.trim())
+      .filter(Boolean)
+
   for (const key in params) {
     const k = key as keyof SearchParams
+    const value = params[k]
+    if (!value) continue
+
     filteredProducts = filteredProducts.filter(product => {
-      if (k === "minPrice") return product.price >= Number(params[k])
-      if (k === "maxPrice") return product.price <= Number(params[k])
-      return String(product[k as keyof Product]) === params[k]
+      if (k === "minPrice") return product.price >= Number(value)
+      if (k === "maxPrice") return product.price <= Number(value)
+      if (k === "style") return splitTokens(product.style).includes(value)
+      return String(product[k as keyof Product]) === value
     })
   }
 

@@ -15,8 +15,10 @@ import {structure} from './src/sanity/structure'
 
 import product from "./src/sanity/schemas/product"
 import event from "./src/sanity/schemas/event"
+import homepage from "./src/sanity/schemas/homepage"
 
-
+const SINGLETON_TYPES = new Set(['homepage'])
+const SINGLETON_ACTIONS = new Set(['duplicate', 'delete', 'unpublish'])
 
 export default defineConfig({
   basePath: '/studio',
@@ -24,7 +26,13 @@ export default defineConfig({
   dataset,
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema : {
-    types: [product, event]
+    types: [product, event, homepage]
+  },
+  document: {
+    actions: (input, context) =>
+      SINGLETON_TYPES.has(context.schemaType)
+        ? input.filter(({ action }) => action && !SINGLETON_ACTIONS.has(action))
+        : input,
   },
   plugins: [
     structureTool({structure}),

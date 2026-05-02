@@ -32,8 +32,15 @@ async function fetchCount(pending: Record<string, string>): Promise<number> {
 
   for (const [k, v] of Object.entries(pending)) {
     if (!v) continue
-    conditions.push(`${k} == $${k}`)
-    params[k] = v
+    if (k === "style") {
+      // style может содержать несколько значений через запятую/слэш ("Эль, Ламбик")
+      // match ищет токен как отдельное слово, без чувствительности к регистру
+      conditions.push(`style match $style`)
+      params.style = v
+    } else {
+      conditions.push(`${k} == $${k}`)
+      params[k] = v
+    }
   }
 
   const query = `count(*[${conditions.join(' && ')}])`
