@@ -11,3 +11,9 @@
 
     $openSansC: var(--font-open-sans-condensed);
     $openSans: var(--font-open-sans);
+
+    // Брейкпоинты — два разных значения по смыслу:
+    // $mobile — переключение mobile-only стилей (размеры, отступы)
+    // $tablet — переключение на бургер-меню (планшеты + мобилки)
+    $mobile: 764px;
+    $tablet: 1024px;

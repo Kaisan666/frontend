@@ -1,0 +1,73 @@
+.not-found {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+
+  &__inner {
+    max-width: 540px;
+    text-align: center;
+  }
+
+  &__code {
+    display: block;
+    font-family: $openSansC;
+    font-size: 140px;
+    font-weight: 800;
+    line-height: 1;
+    color: $orange;
+    letter-spacing: -0.04em;
+  }
+
+  &__title {
+    margin-top: 16px;
+    font-family: $openSansC;
+    font-size: 32px;
+    font-weight: 700;
+    color: $brown;
+  }
+
+  &__text {
+    margin-top: 12px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: $brown;
+    opacity: 0.8;
+  }
+
+  &__actions {
+    margin-top: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  &__link-secondary {
+    color: $brown;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: color 0.18s ease-in-out;
+
+    &:hover {
+      color: $orange;
+    }
+  }
+
+  @media (max-width: $mobile) {
+    padding: 48px 0;
+    min-height: 50vh;
+
+    &__code {
+      font-size: 96px;
+    }
+
+    &__title {
+      font-size: 24px;
+    }
+  }
+}

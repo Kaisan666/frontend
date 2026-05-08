@@ -7,6 +7,12 @@ interface Stat {
   views: number
 }
 
+const CATEGORY_LABELS: Record<string, string> = {
+  beer: 'Пиво',
+  food: 'Еда',
+  other: 'Другое',
+}
+
 export default function StatsPage() {
   const [stats, setStats] = useState<Stat[]>([])
 
@@ -31,7 +37,7 @@ export default function StatsPage() {
           {stats.map(s => (
             <tr key={s.name}>
               <td>{s.name}</td>
-              <td>{s.category}</td>
+              <td>{CATEGORY_LABELS[s.category] ?? s.category}</td>
               <td>{s.views}</td>
             </tr>
           ))}

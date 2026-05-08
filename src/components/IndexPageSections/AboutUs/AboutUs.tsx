@@ -18,9 +18,9 @@ export const AboutUs = () => {
 
         <div className={styles["about-us__main"]}>
           <div className={styles["about-us__description"]}>
-            Shengen+ — пивной бар в Краснодара. Мы собрали более разнообразный
+            Shengen+ — пивной бар в Краснодаре. Мы собрали разнообразный
             ассортимент сортов крафтового и импортного пива из 18 стран — от
-            бельгийских эллей до американских IPA. Приходи один или с компанией.
+            бельгийских элей до американских IPA. Приходи один или с компанией.
           </div>
           <ul className={styles["about-us__features"]}>
             <li className={styles["about-us__features-item"]}>

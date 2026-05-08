@@ -6,18 +6,21 @@ import "@/styles/components/accentButton.scss";
 import Link from "next/link";
 import { BurgerMenu } from "../burgerMenu";
 
+// Должно совпадать с $tablet в src/styles/variables.scss
+const TABLET_BREAKPOINT = 1024;
+
 export const Header = () => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
-    const signal = controller.signal; 
-    setIsMobile(window.innerWidth < 1024)
+    const signal = controller.signal;
+    setIsMobile(window.innerWidth < TABLET_BREAKPOINT);
     window.addEventListener(
       "resize",
       () => {
-        setIsMobile(window.innerWidth < 1024);
+        setIsMobile(window.innerWidth < TABLET_BREAKPOINT);
       },
       { signal: signal },
     );

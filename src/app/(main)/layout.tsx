@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/header";
 import "@/styles/index.scss";
 import "@/styles/_reset.scss"
@@ -13,6 +14,55 @@ import { EventPopupInfo } from "@/components/EventPopup/EventPopupInfo";
 import Popup from "@/components/Popup/Popup";
 
 import YandexMetrika from "../modules/YandexMetrika";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://shengenplus.ru";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Shengen+ — пивной бар в Краснодаре",
+    template: "%s — Shengen+",
+  },
+  description:
+    "Пивной бар Shengen+ в Краснодаре. 150+ сортов крафтового и импортного пива из 18 стран, кухня, уютная атмосфера. Открыты каждый день.",
+  keywords: [
+    "пивной бар Краснодар",
+    "крафтовое пиво Краснодар",
+    "импортное пиво",
+    "Shengen+",
+    "Шенген плюс",
+    "пиво в Краснодаре",
+    "бельгийское пиво",
+    "немецкое пиво",
+  ],
+  applicationName: "Shengen+",
+  authors: [{ name: "Shengen+" }],
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    url: SITE_URL,
+    siteName: "Shengen+",
+    title: "Shengen+ — пивной бар в Краснодаре",
+    description:
+      "150+ сортов крафтового и импортного пива из 18 стран. Уютный бар в Краснодаре.",
+    // og-картинка генерируется динамически через app/(main)/opengraph-image.tsx
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shengen+ — пивной бар в Краснодаре",
+    description: "150+ сортов крафтового и импортного пива из 18 стран.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#D65E12",
+  width: "device-width",
+  initialScale: 1,
+};
 
 const eventsQuery = `*[_type == "event" && isActive == true] | order(startDate asc) {
   _id,

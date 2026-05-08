@@ -47,10 +47,10 @@ export default {
     { name: 'country', title: 'Страна', type: 'string', hidden: ({ document }: any) => document?.category !== 'beer' },
     { name: 'abv', title: 'Крепость (ABV)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer' },
     { name: 'ibu', title: 'Горечь (IBU)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer' },
-    { name: 'pl', title: 'Плотность (PL)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer', validation: (rule : NumberRule) => [
-  rule.min(0).error('IBU не может быть меньше 0'),
-  rule.max(120).error('IBU не может быть больше 120'),
-] },
+    { name: 'pl', title: 'Плотность (°P)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer', validation: (rule: NumberRule) => [
+      rule.min(0).error('Плотность не может быть меньше 0°P'),
+      rule.max(30).error('Плотность не может быть больше 30°P'),
+    ] },
     {
   name: 'slug',
   title: 'Slug',

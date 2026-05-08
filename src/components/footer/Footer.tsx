@@ -35,7 +35,7 @@ export const Footer = () => {
             <li className={styles["footer__info-item"]}>
               <div className={styles["footer__info-item-content"]}>
                 <Phone size={24} strokeWidth={2} />
-                <p>+7 (918) 186-96-00</p>
+                <a href="tel:+79181869600">+7 (918) 186-96-00</a>
               </div>
               
             </li>

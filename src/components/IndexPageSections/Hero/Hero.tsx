@@ -11,7 +11,7 @@ export const Hero = () => {
             </div>
         
         <div className={styles['hero__annotation']}>
-            200+ сортов | 18 стран | Открыты каждый день
+            150+ сортов | 18 стран | Открыты каждый день
         </div>
         </div>
     </section>

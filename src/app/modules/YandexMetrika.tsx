@@ -9,12 +9,19 @@ declare global {
   }
 }
 
+const YM_ID = process.env.NEXT_PUBLIC_YM_ID
+  ? Number(process.env.NEXT_PUBLIC_YM_ID)
+  : null
+
 const YandexMetrika = () => {
   const pathname = usePathname()
 
   useEffect(() => {
-    window.ym?.(108547309, 'hit', window.location.href)
+    if (YM_ID == null) return
+    window.ym?.(YM_ID, 'hit', window.location.href)
   }, [pathname])
+
+  if (YM_ID == null) return null
 
   return (
     <>
@@ -30,9 +37,9 @@ const YandexMetrika = () => {
                   if (document.scripts[j].src === r) { return; }
                 }
                 k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-            })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108547309','ym');
+            })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${YM_ID}','ym');
 
-            ym(108547309, 'init', {
+            ym(${YM_ID}, 'init', {
               ssr: true,
               webvisor: true,
               clickmap: true,
@@ -47,7 +54,7 @@ const YandexMetrika = () => {
       />
       <noscript>
         <div>
-          <img src="https://mc.yandex.ru/watch/108547309" style={{ position: "absolute", left: "-9999px" }} alt="" />
+          <img src={`https://mc.yandex.ru/watch/${YM_ID}`} style={{ position: "absolute", left: "-9999px" }} alt="" />
         </div>
       </noscript>
     </>
