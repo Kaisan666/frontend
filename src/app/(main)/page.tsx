@@ -32,7 +32,6 @@ export default async function Home() {
   return (
     <div className={`${styles["main-page"]}`}>
       <Hero />
-      <section className={styles["galery"]}></section>
       <BeersMenu products={data?.featuredBeers ?? []} />
       <FoodMenu products={data?.featuredFoods ?? []} />
       <AboutUs />

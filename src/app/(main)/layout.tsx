@@ -9,9 +9,11 @@ import { Footer } from "@/components/footer";
 import { PopupProvider } from "@/app/context/PopupContext"
 
 import { client } from "@/sanity/lib/client"
+import { getSiteSettings } from "@/sanity/lib/getSiteSettings"
 import EventButton from "@/components/EventButton/EventButton";
 import { EventPopupInfo } from "@/components/EventPopup/EventPopupInfo";
 import Popup from "@/components/Popup/Popup";
+import { AgeGate } from "@/components/AgeGate";
 
 import YandexMetrika from "../modules/YandexMetrika";
 
@@ -111,18 +113,17 @@ export default async function MainLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const events = await client.fetch(
-    eventsQuery,
-    {},
-    { next: { revalidate: 300 } }
-  );
+  const [events, settings] = await Promise.all([
+    client.fetch(eventsQuery, {}, { next: { revalidate: 300 } }),
+    getSiteSettings(),
+  ]);
 
   return (
     <html lang="ru" className={`${openSans.variable} ${openSansCondensed.variable}`}>
       <body>
         <PopupProvider>
 
-          <Header></Header>
+          <Header settings={settings} />
           <main>
             {children}
             <EventButton count={events.length} />
@@ -132,9 +133,10 @@ export default async function MainLayout({
               <EventPopupInfo events={events} />
             </Popup>
           )}
-          <Footer></Footer>
+          <Footer />
         </PopupProvider>
-        <YandexMetrika/>
+        <YandexMetrika />
+        <AgeGate />
       </body>
     </html>
   );

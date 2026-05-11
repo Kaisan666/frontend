@@ -1,10 +1,8 @@
-import React from "react";
-import styles from "./AboutUs.module.scss";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import { ReviewSwiper } from "@/components/Swipers/reviewsSwiper";
-import { reviews } from "@/app/data/Reviews";
-
+import React from "react"
+import Link from "next/link"
+import styles from "./AboutUs.module.scss"
+import { ReviewSwiper } from "@/components/Swipers/reviewsSwiper"
+import { reviews } from "@/app/data/Reviews"
 
 export const AboutUs = () => {
   return (
@@ -15,13 +13,12 @@ export const AboutUs = () => {
         </h2>
       </div>
       <div className={`${styles["about-us__content"]} container`}>
-
         <div className={styles["about-us__main"]}>
-          <div className={styles["about-us__description"]}>
-            Shengen+ — пивной бар в Краснодаре. Мы собрали разнообразный
-            ассортимент сортов крафтового и импортного пива из 18 стран — от
-            бельгийских элей до американских IPA. Приходи один или с компанией.
-          </div>
+          <p className={styles["about-us__description"]}>
+            Shengen+ — пивной бар в Краснодаре. 150+ сортов крафтового и
+            импортного пива из 18 стран. Приходи один или с компанией — у нас
+            комфортно всем.
+          </p>
           <ul className={styles["about-us__features"]}>
             <li className={styles["about-us__features-item"]}>
               <p className={styles["about-us__features-item-text"]}>
@@ -44,17 +41,19 @@ export const AboutUs = () => {
               </p>
             </li>
           </ul>
+          {/* <Link href="/about" className={styles["about-us__more"]}>
+            Подробнее о нас →
+          </Link> */}
         </div>
       </div>
-      <div className={`${styles["about-us__comments"]}`}>
+      <div className={styles["about-us__comments"]}>
         <div className={`${styles["about-us__comments-title"]} container section-header`}>
-          <h3 className={`${styles["about-us__comments-title-text"]}`}>
+          <h3 className={styles["about-us__comments-title-text"]}>
             Что пишут о нас
           </h3>
         </div>
-          <ReviewSwiper reviews={reviews}>
-          </ReviewSwiper>
+        <ReviewSwiper reviews={reviews} />
       </div>
     </section>
-  );
-};
+  )
+}

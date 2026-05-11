@@ -1,55 +1,96 @@
-.about-us{
-    &__content{
+.about-us {
+  &__title {
+    font-style: italic;
+  }
 
-    }
-    &__title{
-        font-style: italic;
-    }
-    &__features{
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-left: 6px;
-        &-item{
-            position: relative;
-            &::before{
-                content: "✦";
-                position: absolute;
-                top: 50%;
-                left: 0;
-                transform: translateY(-50%);
-            }
-            &-text{
-            margin-left: 16px;
+  &__main {
+    margin-top: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
 
-                font-size: 20px;
-                width: max-content;
-            }
-        }
-    }
-    &__main{
-        margin-top: 12px;
-        display: flex;
-        align-items: center;
-    }
-    &__content{
+  &__description {
+    font-size: 20px;
+    line-height: 1.5;
+    flex: 1 1 360px;
+    margin: 0;
+  }
 
-    }
-    &__description{
+  &__features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 6px;
+
+    &-item {
+      position: relative;
+
+      &::before {
+        content: "✦";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        color: $orange;
+      }
+
+      &-text {
+        margin-left: 16px;
         font-size: 20px;
+      }
     }
-    &__comments{
-        overflow: visible;
-        &-title{
-            font-size: 36px;
-        }
-    }
-    @media screen and (max-width: 1024px) {
-    &__main{
-        flex-direction: column;
-        align-items: normal;
-        gap: 15px;
-    }
-}
-}
+  }
 
+  &__more {
+    flex-basis: 100%;
+    margin-top: 8px;
+    color: $orange;
+    font-weight: 600;
+    font-size: 17px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.18s ease-in-out;
+
+    &:hover {
+      color: $brown;
+    }
+  }
+
+  &__comments {
+    margin-top: 48px;
+    overflow: visible;
+
+    &-title {
+      &-text {
+        font-size: 28px;
+        font-family: $openSansC;
+        font-weight: 700;
+        color: $brown;
+      }
+    }
+  }
+
+  @media (max-width: $tablet) {
+    &__main {
+      flex-direction: column;
+      align-items: normal;
+      gap: 16px;
+    }
+
+    &__features-item-text {
+      font-size: 18px;
+    }
+  }
+
+  @media (max-width: $mobile) {
+    &__comments {
+      margin-top: 32px;
+
+      &-title-text {
+        font-size: 22px;
+      }
+    }
+  }
+}

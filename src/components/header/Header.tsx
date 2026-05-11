@@ -5,11 +5,17 @@ import { navLinks } from "@/app/data/Link";
 import "@/styles/components/accentButton.scss";
 import Link from "next/link";
 import { BurgerMenu } from "../burgerMenu";
+import { BookingLink } from "../BookingLink";
+import type { SiteSettings } from "@/sanity/lib/getSiteSettings";
 
 // Должно совпадать с $tablet в src/styles/variables.scss
 const TABLET_BREAKPOINT = 1024;
 
-export const Header = () => {
+type Props = {
+  settings: SiteSettings;
+};
+
+export const Header = ({ settings }: Props) => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -57,14 +63,12 @@ export const Header = () => {
 
         {isMobile ? (
           <div className={styles['header__mobile-actions']}>
-            <a
-              href="https://taplink.cc/shengenplus"
-              target="_blank"
-              rel="noopener noreferrer"
+            <BookingLink
               className="accent-button accent-button--compact"
+              source="header_mobile"
             >
               Забронировать
-            </a>
+            </BookingLink>
             <button
               className={`${styles['header__burger-btn']} ${isBurgerOpen ? styles['header__burger-btn--active'] : ""}`}
               onClick={() => {
@@ -77,10 +81,12 @@ export const Header = () => {
             </button>
           </div>
         ) : (
-          <a href="https://taplink.cc/shengenplus" target="_blank" rel="noopener noreferrer" className="accent-button">Забронировать</a>
+          <BookingLink className="accent-button" source="header_desktop">
+            Забронировать
+          </BookingLink>
         )}
       </div>
-      <BurgerMenu isOpen={isBurgerOpen} toggleBurger={toggleBurgerMenu}></BurgerMenu>
+      <BurgerMenu isOpen={isBurgerOpen} toggleBurger={toggleBurgerMenu} settings={settings} />
     </header>
   );
 };

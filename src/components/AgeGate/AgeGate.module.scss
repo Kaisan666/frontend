@@ -1,0 +1,96 @@
+.age-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+
+  background: rgba(30, 19, 18, 0.78);
+  backdrop-filter: blur(6px);
+
+  &__card {
+    width: 100%;
+    max-width: 480px;
+    padding: 40px 32px;
+    border-radius: 16px;
+    background: $mainWhite;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    text-align: center;
+  }
+
+  &__title {
+    font-family: $openSansC;
+    font-size: 24px;
+    font-weight: 700;
+    color: $brown;
+    margin: 0 0 12px;
+    line-height: 1.25;
+  }
+
+  &__text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: $brown;
+    opacity: 0.8;
+    margin: 0 0 28px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  &__btn {
+    // Использует .accent-button сверху — переопределяем только то,
+    // чтобы кнопка центрировалась и текст не уплывал
+    justify-content: center;
+  }
+
+  &__btn-no {
+    padding: 12px 24px;
+    background: transparent;
+    border: 2px solid $brown;
+    color: $brown;
+    font-family: $openSans, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.18s, color 0.18s;
+
+    &:hover {
+      background: $brown;
+      color: $mainWhite;
+    }
+  }
+
+  @media (max-width: $mobile) {
+    padding: 16px;
+
+    &__card {
+      padding: 28px 20px;
+    }
+
+    &__title {
+      font-size: 20px;
+    }
+
+    &__text {
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    &__actions {
+      flex-direction: column;
+    }
+
+    &__btn-no {
+      width: 100%;
+    }
+  }
+}
