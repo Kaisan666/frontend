@@ -6,5 +6,8 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  // useCdn: false — потому что используем `next.revalidate` (ISR) в layout и
+  // других местах. С `useCdn: true` Sanity CDN кэширует ответы на своей стороне,
+  // и Next-ревалидация не подхватывает свежие данные вовремя.
+  useCdn: false,
 })

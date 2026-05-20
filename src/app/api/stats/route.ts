@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { mskDate, mskDateDaysAgo } from "@/lib/date"
 
 // Дашборд /stats тянет всё одной ручкой. Принимает ?period=day|week|month
 // или явный диапазон ?from=YYYY-MM-DD&to=YYYY-MM-DD.
@@ -12,51 +13,61 @@ const PERIOD_DAYS: Record<Period, number> = {
   month: 30,
 }
 
+function periodDays(period: Period | null): number {
+  return PERIOD_DAYS[(period ?? "month") as Period] ?? 30
+}
+
 function startOf(period: Period | null, from: string | null): string {
   if (from) return from
-  const days = PERIOD_DAYS[(period ?? "month") as Period] ?? 30
-  return new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0]
+  return mskDateDaysAgo(periodDays(period) - 1)
 }
 
 function today(): string {
-  return new Date().toISOString().split("T")[0]
+  return mskDate()
 }
 
-export async function GET(request: Request) {
-  const url = new URL(request.url)
-  const period = url.searchParams.get("period") as Period | null
-  const from = startOf(period, url.searchParams.get("from"))
-  const to = url.searchParams.get("to") ?? today()
+type Row = {
+  type: string
+  product_name: string | null
+  category: string | null
+  session_id: string
+  time_on_page_ms: number | null
+  device_type: string | null
+  applied_filters: Record<string, string> | null
+  date: string
+  created_at: string
+  source: string | null
+}
 
-  // Тянем все события за период одной выборкой — потом агрегируем в JS,
-  // потому что Supabase JS client не очень дружит со сложными group by.
-  const { data: events, error } = await supabase
-    .from("events_log")
-    .select("type, product_name, category, session_id, time_on_page_ms, date, source")
-    .gte("date", from)
-    .lte("date", to)
+// Часовой пояс для heatmap — нужен в виде ISO-локали с явной timezone.
+const MSK_PARTS = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Moscow",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  weekday: "short",
+})
 
-  if (error) {
-    console.error(error)
-    return Response.json({ error: error.message }, { status: 500 })
+// Возвращает [dayOfWeek 0..6 (0=Mon), hour 0..23] в МСК для ISO-строки
+function getMskDayAndHour(iso: string): [number, number] {
+  const date = new Date(iso)
+  const parts = MSK_PARTS.formatToParts(date)
+  const weekday = parts.find((p) => p.type === "weekday")?.value ?? "Mon"
+  const hour = Number(parts.find((p) => p.type === "hour")?.value ?? "0")
+  const dayMap: Record<string, number> = {
+    Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6,
   }
+  return [dayMap[weekday] ?? 0, hour]
+}
 
-  type Row = {
-    type: string
-    product_name: string | null
-    category: string | null
-    session_id: string
-    time_on_page_ms: number | null
-    date: string
-    source: string | null
-  }
+// ---- Агрегации основного периода ----
 
-  const rows = (events ?? []) as Row[]
+type Aggregates = ReturnType<typeof aggregate>
 
-  // ---- Агрегаты ----
-
+function aggregate(rows: Row[]) {
   const views = rows.filter((r) => r.type === "view")
   const timeRows = rows.filter((r) => r.type === "time_on_page" && r.time_on_page_ms != null)
   const bookings = rows.filter((r) => r.type === "booking_click")
@@ -75,8 +86,53 @@ export async function GET(request: Request) {
   const conversionRate =
     uniqueSessions > 0 ? +(bookings.length / uniqueSessions).toFixed(3) : 0
 
-  // Просмотры по дням (для LineChart) — заполняем все даты, даже нулевые,
-  // чтобы график не «прыгал» пустотами
+  return {
+    views: views.length,
+    uniqueSessions,
+    avgTimeOnPageSec,
+    bookingClicks: bookings.length,
+    conversionRate,
+    rawViews: views,
+    rawTime: timeRows,
+  }
+}
+
+export async function GET(request: Request) {
+  const url = new URL(request.url)
+  const period = url.searchParams.get("period") as Period | null
+  const from = startOf(period, url.searchParams.get("from"))
+  const to = url.searchParams.get("to") ?? today()
+
+  // Длина текущего периода в днях — для расчёта предыдущего диапазона
+  const days = periodDays(period)
+  const prevTo = mskDateDaysAgo(days)
+  const prevFrom = mskDateDaysAgo(days * 2 - 1)
+
+  const FIELDS =
+    "type, product_name, category, session_id, time_on_page_ms, device_type, applied_filters, date, created_at, source"
+
+  // Три параллельных запроса: текущий период, предыдущий период, исторические сессии (до текущего периода)
+  const [current, previous, historical] = await Promise.all([
+    supabase.from("events_log").select(FIELDS).gte("date", from).lte("date", to),
+    supabase.from("events_log").select(FIELDS).gte("date", prevFrom).lte("date", prevTo),
+    supabase.from("events_log").select("session_id").lt("date", from).limit(10000),
+  ])
+
+  if (current.error) {
+    console.error(current.error)
+    return Response.json({ error: current.error.message }, { status: 500 })
+  }
+
+  const rows = ((current.data ?? []) as unknown) as Row[]
+  const prevRows = ((previous.data ?? []) as unknown) as Row[]
+  const histSessions = new Set(
+    ((historical.data ?? []) as { session_id: string }[]).map((r) => r.session_id)
+  )
+
+  const agg: Aggregates = aggregate(rows)
+  const prevAgg: Aggregates = aggregate(prevRows)
+
+  // ---- Просмотры по дням ----
   const viewsByDayMap = new Map<string, number>()
   const startMs = new Date(from).getTime()
   const endMs = new Date(to).getTime()
@@ -84,16 +140,16 @@ export async function GET(request: Request) {
     const day = new Date(t).toISOString().split("T")[0]
     viewsByDayMap.set(day, 0)
   }
-  views.forEach((r) => {
+  agg.rawViews.forEach((r) => {
     viewsByDayMap.set(r.date, (viewsByDayMap.get(r.date) ?? 0) + 1)
   })
   const viewsByDay = Array.from(viewsByDayMap.entries())
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, count]) => ({ date, views: count }))
 
-  // Топ-категории (для PieChart)
+  // ---- Топ-категории ----
   const categoryMap = new Map<string, number>()
-  views.forEach((r) => {
+  agg.rawViews.forEach((r) => {
     const cat = r.category ?? "other"
     categoryMap.set(cat, (categoryMap.get(cat) ?? 0) + 1)
   })
@@ -101,9 +157,9 @@ export async function GET(request: Request) {
     .map(([category, count]) => ({ category, views: count }))
     .sort((a, b) => b.views - a.views)
 
-  // Топ-товары (для BarChart) — top 10
+  // ---- Топ и боттом товаров ----
   const productMap = new Map<string, { category: string; views: number }>()
-  views.forEach((r) => {
+  agg.rawViews.forEach((r) => {
     if (!r.product_name) return
     const existing = productMap.get(r.product_name)
     if (existing) {
@@ -112,22 +168,121 @@ export async function GET(request: Request) {
       productMap.set(r.product_name, { category: r.category ?? "other", views: 1 })
     }
   })
-  const topProducts = Array.from(productMap.entries())
-    .map(([name, info]) => ({ name, ...info }))
-    .sort((a, b) => b.views - a.views)
+  const productsArr = Array.from(productMap.entries()).map(([name, info]) => ({
+    name,
+    ...info,
+  }))
+  const topProducts = [...productsArr].sort((a, b) => b.views - a.views).slice(0, 10)
+  const bottomProducts = [...productsArr].sort((a, b) => a.views - b.views).slice(0, 5)
+
+  // ---- Устройства ----
+  const deviceMap = new Map<string, number>()
+  rows.forEach((r) => {
+    if (!r.device_type) return
+    deviceMap.set(r.device_type, (deviceMap.get(r.device_type) ?? 0) + 1)
+  })
+  const devices = {
+    mobile: deviceMap.get("mobile") ?? 0,
+    tablet: deviceMap.get("tablet") ?? 0,
+    desktop: deviceMap.get("desktop") ?? 0,
+  }
+
+  // ---- Топ применённых фильтров ----
+  const filterMap = new Map<string, number>()
+  agg.rawViews.forEach((r) => {
+    if (!r.applied_filters || typeof r.applied_filters !== "object") return
+    Object.entries(r.applied_filters).forEach(([k, v]) => {
+      if (!v) return
+      const key = `${k}=${String(v)}`
+      filterMap.set(key, (filterMap.get(key) ?? 0) + 1)
+    })
+  })
+  const topFilters = Array.from(filterMap.entries())
+    .map(([keyValue, count]) => {
+      const [key, value] = keyValue.split("=")
+      return { key, value, count }
+    })
+    .sort((a, b) => b.count - a.count)
     .slice(0, 10)
+
+  // ---- Новые vs возвращающиеся сессии ----
+  const currentSessions = new Set(rows.map((r) => r.session_id))
+  let newSessions = 0
+  let returningSessions = 0
+  currentSessions.forEach((sid) => {
+    if (histSessions.has(sid)) returningSessions++
+    else newSessions++
+  })
+  const newVsReturning = { new: newSessions, returning: returningSessions }
+
+  // ---- Heatmap: день недели × час (МСК) ----
+  const heatmap: number[][] = Array.from({ length: 7 }, () => new Array(24).fill(0))
+  rows.forEach((r) => {
+    if (!r.created_at) return
+    const [day, hour] = getMskDayAndHour(r.created_at)
+    heatmap[day][hour]++
+  })
+
+  // ---- Распределение времени на странице ----
+  const timeBuckets = {
+    "<10s": 0,
+    "10-30s": 0,
+    "30-60s": 0,
+    "1-3min": 0,
+    "3-5min": 0,
+    ">5min": 0,
+  }
+  agg.rawTime.forEach((r) => {
+    const sec = (r.time_on_page_ms ?? 0) / 1000
+    if (sec < 10) timeBuckets["<10s"]++
+    else if (sec < 30) timeBuckets["10-30s"]++
+    else if (sec < 60) timeBuckets["30-60s"]++
+    else if (sec < 180) timeBuckets["1-3min"]++
+    else if (sec < 300) timeBuckets["3-5min"]++
+    else timeBuckets[">5min"]++
+  })
+  const timeDistribution = Object.entries(timeBuckets).map(([bucket, count]) => ({
+    bucket,
+    count,
+  }))
+
+  // ---- Bounce rate: сессии с ровно 1 view-эвентом ----
+  const sessionViewCount = new Map<string, number>()
+  agg.rawViews.forEach((r) => {
+    sessionViewCount.set(r.session_id, (sessionViewCount.get(r.session_id) ?? 0) + 1)
+  })
+  let bounces = 0
+  sessionViewCount.forEach((count) => {
+    if (count === 1) bounces++
+  })
+  const bounceRate =
+    sessionViewCount.size > 0 ? +(bounces / sessionViewCount.size).toFixed(3) : 0
 
   return Response.json({
     period: { from, to },
     totals: {
-      views: views.length,
-      uniqueSessions,
-      avgTimeOnPageSec,
-      bookingClicks: bookings.length,
-      conversionRate,
+      views: agg.views,
+      uniqueSessions: agg.uniqueSessions,
+      avgTimeOnPageSec: agg.avgTimeOnPageSec,
+      bookingClicks: agg.bookingClicks,
+      conversionRate: agg.conversionRate,
+    },
+    previous: {
+      views: prevAgg.views,
+      uniqueSessions: prevAgg.uniqueSessions,
+      avgTimeOnPageSec: prevAgg.avgTimeOnPageSec,
+      bookingClicks: prevAgg.bookingClicks,
+      conversionRate: prevAgg.conversionRate,
     },
     viewsByDay,
     topCategories,
     topProducts,
+    bottomProducts,
+    devices,
+    topFilters,
+    newVsReturning,
+    heatmap,
+    timeDistribution,
+    bounceRate,
   })
 }

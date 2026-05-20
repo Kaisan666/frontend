@@ -14,6 +14,7 @@ import EventButton from "@/components/EventButton/EventButton";
 import { EventPopupInfo } from "@/components/EventPopup/EventPopupInfo";
 import Popup from "@/components/Popup/Popup";
 import { AgeGate } from "@/components/AgeGate";
+import { CookieBanner } from "@/components/CookieBanner";
 
 import YandexMetrika from "../modules/YandexMetrika";
 
@@ -137,6 +138,7 @@ export default async function MainLayout({
         </PopupProvider>
         <YandexMetrika />
         <AgeGate />
+        <CookieBanner />
       </body>
     </html>
   );

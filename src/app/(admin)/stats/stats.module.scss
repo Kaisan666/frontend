@@ -139,5 +139,211 @@
     font-size: 26px;
     font-weight: 700;
     color: $brown;
+    margin-bottom: 6px;
+  }
+
+  &__delta {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(52, 18, 18, 0.08);
+    color: $brown;
+
+    &--up {
+      background: rgba(34, 134, 58, 0.12);
+      color: #22863a;
+    }
+
+    &--down {
+      background: rgba(203, 36, 49, 0.12);
+      color: #cb2431;
+    }
+
+    &--flat {
+      background: rgba(52, 18, 18, 0.08);
+      color: $brown;
+      opacity: 0.7;
+    }
+  }
+}
+
+// ---- Heatmap ----
+
+.heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 36px repeat(24, 1fr);
+    gap: 2px;
+    align-items: stretch;
+  }
+
+  &__corner {
+    // пустой угол слева сверху
+  }
+
+  &__hour-label {
+    font-size: 10px;
+    color: $brown;
+    opacity: 0.6;
+    text-align: center;
+    align-self: end;
+    padding-bottom: 2px;
+    user-select: none;
+  }
+
+  &__day-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $brown;
+    align-self: center;
+    user-select: none;
+  }
+
+  &__cell {
+    aspect-ratio: 1 / 1;
+    min-height: 18px;
+    border-radius: 3px;
+    border: 1px solid rgba(52, 18, 18, 0.05);
+    transition: transform 0.1s;
+
+    &:hover {
+      transform: scale(1.15);
+      cursor: help;
+      box-shadow: 0 0 0 2px $orange;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    font-size: 11px;
+    color: $brown;
+    opacity: 0.7;
+
+    &-scale {
+      display: flex;
+      gap: 2px;
+
+      div {
+        width: 18px;
+        height: 12px;
+        border-radius: 2px;
+      }
+    }
+  }
+
+  @media (max-width: $mobile) {
+    &__grid {
+      grid-template-columns: 28px repeat(24, 1fr);
+      gap: 1px;
+    }
+
+    &__cell {
+      min-height: 12px;
+    }
+
+    &__hour-label {
+      font-size: 9px;
+    }
+  }
+}
+
+// ---- Insight cards (Bounce + New/Returning) ----
+
+.insights {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__card {
+    padding: 16px;
+    background: $warmGray;
+    border-radius: 10px;
+  }
+
+  &__label {
+    font-size: 13px;
+    color: $brown;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  &__value {
+    font-family: $openSansC;
+    font-size: 36px;
+    font-weight: 700;
+    color: $brown;
+    line-height: 1;
+  }
+
+  &__hint {
+    margin-top: 8px;
+    font-size: 12px;
+    color: $brown;
+    opacity: 0.6;
+    line-height: 1.4;
+  }
+
+  &__split {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 4px;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__split-num {
+    font-family: $openSansC;
+    font-size: 28px;
+    font-weight: 700;
+    color: $brown;
+    line-height: 1;
+  }
+
+  &__split-pct {
+    font-size: 13px;
+    font-weight: 600;
+    color: $orange;
+    margin-top: 2px;
+  }
+
+  &__split-label {
+    font-size: 12px;
+    color: $brown;
+    opacity: 0.65;
+    margin-top: 2px;
+  }
+
+  &__bar {
+    display: flex;
+    margin-top: 14px;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: rgba(52, 18, 18, 0.08);
+  }
+
+  &__bar-segment {
+    height: 100%;
+
+    &--new {
+      background: $orange;
+    }
+
+    &--returning {
+      background: $yellow;
+    }
   }
 }

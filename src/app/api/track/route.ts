@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { mskDate } from "@/lib/date"
 
 // Расширенный трекинг событий. Принимает разные типы:
 //  - "view"          — просмотр карточки товара
@@ -33,7 +34,7 @@ type EventPayload = ViewPayload | TimeOnPagePayload | BookingClickPayload
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as EventPayload
-    const today = new Date().toISOString().split("T")[0]
+    const today = mskDate()
 
     if (body.type === "view") {
       // Старая RPC для совместимости — продолжает считать суммарные просмотры

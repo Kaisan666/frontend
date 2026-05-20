@@ -1,4 +1,5 @@
-import React from "react";
+import React, { cache } from "react";
+import type { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
 import { Product } from "@/types/product";
 import { ProductCard } from "@/components/ProductCard";
@@ -11,16 +12,51 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function ProductPage({ params }: PageProps) {
-  const { slug } = await params;
-
-  const product: Product | null = await client.fetch(
+// Один fetch на товар, замемоизирован через React `cache()` — и `generateMetadata`,
+// и сам компонент дёргают его, но реальный запрос к Sanity уходит один раз.
+const getProduct = cache(async (slug: string): Promise<Product | null> => {
+  return client.fetch<Product | null>(
     `*[_type == "product" && slug.current == $slug][0]{
       ...,
       "imageUrl": image.asset->url
     }`,
     { slug },
   );
+});
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProduct(slug);
+
+  if (!product) {
+    return { title: "Товар не найден" };
+  }
+
+  const isBeer = product.category === "beer";
+  const subtitle = isBeer
+    ? [product.style, product.country].filter(Boolean).join(" · ")
+    : null;
+
+  const descParts = [
+    product.description,
+    subtitle,
+    `${product.price}₽`,
+  ].filter(Boolean);
+
+  return {
+    title: product.name,
+    description: descParts.join(" — "),
+    openGraph: {
+      title: product.name,
+      description: descParts.join(" — "),
+      images: product.imageUrl ? [{ url: product.imageUrl }] : undefined,
+    },
+  };
+}
+
+export default async function ProductPage({ params }: PageProps) {
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     notFound();

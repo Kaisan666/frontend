@@ -1,1 +1,0 @@
-export {BeerCard} from "./BeerCard"
