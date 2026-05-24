@@ -1,37 +1,39 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useSyncExternalStore } from "react"
 import styles from "./AgeGate.module.scss"
 
 const STORAGE_KEY = "age_confirmed"
 
+const subscribeStorage = (callback: () => void) => {
+  window.addEventListener("storage", callback)
+  return () => window.removeEventListener("storage", callback)
+}
+
+const getStorageConfirmed = () => {
+  try {
+    return window.localStorage.getItem(STORAGE_KEY) === "true"
+  } catch {
+    // localStorage может бросать в приватном режиме — тогда показываем модал каждый раз.
+    return false
+  }
+}
+
+const getServerConfirmed = () => false
+
 export const AgeGate = () => {
-  const [hidden, setHidden] = useState(false)
+  const confirmedInStorage = useSyncExternalStore(
+    subscribeStorage,
+    getStorageConfirmed,
+    getServerConfirmed,
+  )
+  const [confirmedNow, setConfirmedNow] = useState(false)
+  const hidden = confirmedInStorage || confirmedNow
 
-  // На монтировании читаем флаг. Если уже подтвердили — скрываем модал.
-  // Если нет — оставляем модал и блокируем скролл страницы.
+  // Блокируем скролл страницы только пока модал виден.
   useEffect(() => {
-    let confirmed = false
-    try {
-      confirmed = window.localStorage.getItem(STORAGE_KEY) === "true"
-    } catch {
-      // localStorage может бросать в приватном режиме — тогда показываем
-      // модал каждый раз. Это безопасный дефолт.
-    }
-
-    if (confirmed) {
-      setHidden(true)
-      return
-    }
-
+    if (hidden) return
     document.body.style.overflow = "hidden"
     return () => {
-      document.body.style.overflow = ""
-    }
-  }, [])
-
-  // Снимаем блокировку скролла, когда модал прячется (нажали «Да»)
-  useEffect(() => {
-    if (hidden) {
       document.body.style.overflow = ""
     }
   }, [hidden])
@@ -44,7 +46,7 @@ export const AgeGate = () => {
     } catch {
       // Если приватный режим — ничего не пишем, но и не падаем
     }
-    setHidden(true)
+    setConfirmedNow(true)
   }
 
   const deny = () => {

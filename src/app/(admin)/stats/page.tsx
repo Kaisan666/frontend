@@ -38,23 +38,46 @@ type StatsData = {
   bounceRate: number
 }
 
+type FetchState = {
+  data: StatsData | null
+  fetchedPeriod: Period | null
+  error: string | null
+}
+
 export default function StatsPage() {
   const [period, setPeriod] = useState<Period>("month")
-  const [data, setData] = useState<StatsData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [state, setState] = useState<FetchState>({
+    data: null,
+    fetchedPeriod: null,
+    error: null,
+  })
+
+  // Грузим, пока фактически загруженный период не совпал с выбранным.
+  const loading = state.fetchedPeriod !== period
+  const { data, error } = state
 
   useEffect(() => {
-    setLoading(true)
-    setError(null)
+    let cancelled = false
     fetch(`/api/stats?period=${period}`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        return r.json()
+        return r.json() as Promise<StatsData>
       })
-      .then(setData)
-      .catch((e) => setError(String(e.message ?? e)))
-      .finally(() => setLoading(false))
+      .then((d) => {
+        if (cancelled) return
+        setState({ data: d, fetchedPeriod: period, error: null })
+      })
+      .catch((e) => {
+        if (cancelled) return
+        setState((prev) => ({
+          ...prev,
+          fetchedPeriod: period,
+          error: String(e.message ?? e),
+        }))
+      })
+    return () => {
+      cancelled = true
+    }
   }, [period])
 
   return (
@@ -65,7 +88,7 @@ export default function StatsPage() {
       </header>
 
       {loading && <p className={styles["stats__state"]}>Загружаем…</p>}
-      {error && (
+      {error && !loading && (
         <p className={styles["stats__state"]} role="alert">
           Ошибка: {error}
         </p>

@@ -1,5 +1,4 @@
 import React from "react"
-import Link from "next/link"
 import styles from "./AboutUs.module.scss"
 import { ReviewSwiper } from "@/components/Swipers/reviewsSwiper"
 import { reviews } from "@/app/data/Reviews"

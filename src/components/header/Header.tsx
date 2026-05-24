@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 import styles from "./Header.module.scss";
 import { navLinks } from "@/app/data/Link";
 import "@/styles/components/accentButton.scss";
@@ -16,28 +16,29 @@ type Props = {
   settings: SiteSettings;
 };
 
+const subscribeResize = (callback: () => void) => {
+  window.addEventListener("resize", callback);
+  return () => window.removeEventListener("resize", callback);
+};
+
+const getIsMobile = () => window.innerWidth < TABLET_BREAKPOINT;
+const getServerIsMobile = () => false;
+
 export const Header = ({ settings }: Props) => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useSyncExternalStore(
+    subscribeResize,
+    getIsMobile,
+    getServerIsMobile,
+  );
   const isHidden = useHideOnScroll();
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    setIsMobile(window.innerWidth < TABLET_BREAKPOINT);
-    window.addEventListener(
-      "resize",
-      () => {
-        setIsMobile(window.innerWidth < TABLET_BREAKPOINT);
-      },
-      { signal: signal },
-    );
-    document.documentElement.style.overflow = isBurgerOpen ? 'hidden' : '';
+    document.documentElement.style.overflow = isBurgerOpen ? "hidden" : "";
     return () => {
-      controller.abort();
+      document.documentElement.style.overflow = "";
     };
   }, [isBurgerOpen]);
-  
 
 
   const toggleBurgerMenu = () => {

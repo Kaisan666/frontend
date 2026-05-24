@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import Link from "next/link"
 import styles from "./not-found.module.scss"
 
 export default function Error({
@@ -29,9 +30,9 @@ export default function Error({
           <button onClick={reset} className="accent-button" type="button">
             Попробовать снова
           </button>
-          <a href="/" className={styles["not-found__link-secondary"]}>
+          <Link href="/" className={styles["not-found__link-secondary"]}>
             На главную
-          </a>
+          </Link>
         </div>
       </div>
     </div>

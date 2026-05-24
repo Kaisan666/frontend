@@ -3,7 +3,7 @@ import styles from "./ProductsCard.module.scss"
 import Link from 'next/link'
 import { Product } from '@/types/product'
 
-export const ProductCard = ({category, imageUrl, unit, name, price, quantity, abv, country, slug, description, ibu, style} : Product) => {
+export const ProductCard = ({category, imageUrl, unit, name, price, quantity, country, slug} : Product) => {
   return (
     <div className={styles['product-card']}>
         <div className={styles['product-card__media']}>

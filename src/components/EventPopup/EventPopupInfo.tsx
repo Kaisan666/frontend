@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { PortableText } from "@portabletext/react";
+import type { PortableTextBlock } from "@portabletext/types";
 import Image from "next/image";
 import styles from "./EventPopupInfo.module.scss";
 
@@ -9,12 +10,17 @@ type EventItem = {
   title?: string;
   startDate?: string;
   imageUrl?: string;
-  body?: any;
+  body?: PortableTextBlock[];
+};
+
+type PortableImageValue = {
+  asset: { url: string };
+  alt?: string;
 };
 
 const portableTextComponents = {
   types: {
-    image: ({ value }: { value: any }) => (
+    image: ({ value }: { value: PortableImageValue }) => (
       <Image
         src={value.asset.url}
         alt={value.alt || ""}

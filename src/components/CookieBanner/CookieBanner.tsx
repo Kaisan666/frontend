@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState, useSyncExternalStore } from "react"
 import styles from "./CookieBanner.module.scss"
 
 const STORAGE_KEY = "cookies_accepted"
@@ -9,18 +9,32 @@ const STORAGE_KEY = "cookies_accepted"
 // либо вставить внешний URL).
 const POLICY_LINK = "#"
 
-export const CookieBanner = () => {
-  const [hidden, setHidden] = useState(true) // SSR: спрятан, на mount решаем
+const subscribeStorage = (callback: () => void) => {
+  window.addEventListener("storage", callback)
+  return () => window.removeEventListener("storage", callback)
+}
 
-  useEffect(() => {
-    let accepted = false
-    try {
-      accepted = window.localStorage.getItem(STORAGE_KEY) === "true"
-    } catch {
-      // приватный режим — показываем баннер каждый раз
-    }
-    setHidden(accepted)
-  }, [])
+const getStorageAccepted = () => {
+  try {
+    return window.localStorage.getItem(STORAGE_KEY) === "true"
+  } catch {
+    // приватный режим — показываем баннер каждый раз
+    return false
+  }
+}
+
+// SSR / начальная гидрация: считаем «принято», чтобы баннер не мигал у тех,
+// кто уже подтвердил. После гидрации snapshot переключается на реальное значение.
+const getServerAccepted = () => true
+
+export const CookieBanner = () => {
+  const acceptedInStorage = useSyncExternalStore(
+    subscribeStorage,
+    getStorageAccepted,
+    getServerAccepted,
+  )
+  const [acceptedNow, setAcceptedNow] = useState(false)
+  const hidden = acceptedInStorage || acceptedNow
 
   if (hidden) return null
 
@@ -30,7 +44,7 @@ export const CookieBanner = () => {
     } catch {
       // приватный режим — просто скрываем без сохранения
     }
-    setHidden(true)
+    setAcceptedNow(true)
   }
 
   return (

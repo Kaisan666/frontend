@@ -1,0 +1,140 @@
+
+> frontend@0.1.0 lint
+> eslint
+
+
+e:\programmingProjects\shengenBar\frontend\sanity.config.ts
+  12:9  warning  'schema' is defined but never used  @typescript-eslint/no-unused-vars
+
+e:\programmingProjects\shengenBar\frontend\src\app\(admin)\stats\page.tsx
+  48:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+e:\programmingProjects\shengenBar\frontend\src\app\(admin)\stats\page.tsx:48:5
+  46 |
+  47 |   useEffect(() => {
+> 48 |     setLoading(true)
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  49 |     setError(null)
+  50 |     fetch(`/api/stats?period=${period}`)
+  51 |       .then((r) => {  react-hooks/set-state-in-effect
+
+e:\programmingProjects\shengenBar\frontend\src\app\(main)\error.tsx
+  32:11  error  Do not use an `<a>` element to navigate to `/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  32:11  error  Do not use an `<a>` element to navigate to `/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+
+e:\programmingProjects\shengenBar\frontend\src\app\(main)\products\[slug]\page.tsx
+  90:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+e:\programmingProjects\shengenBar\frontend\src\app\modules\YandexMetrika.tsx
+  57:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+e:\programmingProjects\shengenBar\frontend\src\components\AgeGate\AgeGate.tsx
+  22:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+e:\programmingProjects\shengenBar\frontend\src\components\AgeGate\AgeGate.tsx:22:7
+  20 |
+  21 |     if (confirmed) {
+> 22 |       setHidden(true)
+     |       ^^^^^^^^^ Avoid calling setState() directly within an effect
+  23 |       return
+  24 |     }
+  25 |  react-hooks/set-state-in-effect
+
+e:\programmingProjects\shengenBar\frontend\src\components\CookieBanner\CookieBanner.tsx
+  22:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+e:\programmingProjects\shengenBar\frontend\src\components\CookieBanner\CookieBanner.tsx:22:5
+  20 |       // приватный режим — показываем баннер каждый раз
+  21 |     }
+> 22 |     setHidden(accepted)
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  23 |   }, [])
+  24 |
+  25 |   if (hidden) return null  react-hooks/set-state-in-effect
+
+e:\programmingProjects\shengenBar\frontend\src\components\EventPopup\EventPopupInfo.tsx
+  12:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+e:\programmingProjects\shengenBar\frontend\src\components\IndexPageSections\AboutUs\AboutUs.tsx
+  2:8  warning  'Link' is defined but never used  @typescript-eslint/no-unused-vars
+
+e:\programmingProjects\shengenBar\frontend\src\components\ProductCard\ProductCard.tsx
+   6:79   warning  'abv' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   6:99   warning  'description' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   6:112  warning  'ibu' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   6:117  warning  'style' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  13:13   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+e:\programmingProjects\shengenBar\frontend\src\components\burgerMenu\BurgerMenu.tsx
+  20:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+e:\programmingProjects\shengenBar\frontend\src\components\burgerMenu\BurgerMenu.tsx:20:5
+  18 |   const [isMounted, setIsMounted] = useState(false)
+  19 |   useEffect(() => {
+> 20 |     setIsMounted(true)
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  21 |   }, [])
+  22 |
+  23 |   if (!isMounted) {  react-hooks/set-state-in-effect
+
+e:\programmingProjects\shengenBar\frontend\src\components\footer\Footer.tsx
+  73:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  79:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+e:\programmingProjects\shengenBar\frontend\src\components\header\Header.tsx
+  27:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+e:\programmingProjects\shengenBar\frontend\src\components\header\Header.tsx:27:5
+  25 |     const controller = new AbortController();
+  26 |     const signal = controller.signal;
+> 27 |     setIsMobile(window.innerWidth < TABLET_BREAKPOINT);
+     |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  28 |     window.addEventListener(
+  29 |       "resize",
+  30 |       () => {  react-hooks/set-state-in-effect
+
+e:\programmingProjects\shengenBar\frontend\src\sanity\schemas\event.ts
+  1:1  warning  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+e:\programmingProjects\shengenBar\frontend\src\sanity\schemas\product.ts
+   2:1   warning  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+  39:82  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  46:77  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  47:80  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  48:84  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  49:82  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  50:83  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+
+✖ 28 problems (15 errors, 13 warnings)
+

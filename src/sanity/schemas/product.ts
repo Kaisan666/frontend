@@ -1,5 +1,10 @@
 import { NumberRule } from 'sanity'
-export default {
+
+type HiddenContext = { document?: { category?: string } }
+const onlyFor = (cat: 'beer' | 'food') =>
+  ({ document }: HiddenContext) => document?.category !== cat
+
+const product = {
   name: 'product',
   title: 'Товар',
   type: 'document',
@@ -36,18 +41,18 @@ export default {
       }
     },
     // только еда
-    { name: 'ingredients', title: 'Состав', type: 'text', hidden: ({ document }: any) => document?.category !== 'food' },
+    { name: 'ingredients', title: 'Состав', type: 'text', hidden: onlyFor('food') },
     // питательная ценность
     { name: 'calories', title: 'Калорийность (ккал)', type: 'number' },
     { name: 'protein', title: 'Белки (г)', type: 'number' },
     { name: 'fat', title: 'Жиры (г)', type: 'number' },
     { name: 'carbs', title: 'Углеводы (г)', type: 'number' },
     // только пиво
-    { name: 'style', title: 'Стиль', type: 'string', hidden: ({ document }: any) => document?.category !== 'beer' },
-    { name: 'country', title: 'Страна', type: 'string', hidden: ({ document }: any) => document?.category !== 'beer' },
-    { name: 'abv', title: 'Крепость (ABV)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer' },
-    { name: 'ibu', title: 'Горечь (IBU)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer' },
-    { name: 'pl', title: 'Плотность (°P)', type: 'number', hidden: ({ document }: any) => document?.category !== 'beer', validation: (rule: NumberRule) => [
+    { name: 'style', title: 'Стиль', type: 'string', hidden: onlyFor('beer') },
+    { name: 'country', title: 'Страна', type: 'string', hidden: onlyFor('beer') },
+    { name: 'abv', title: 'Крепость (ABV)', type: 'number', hidden: onlyFor('beer') },
+    { name: 'ibu', title: 'Горечь (IBU)', type: 'number', hidden: onlyFor('beer') },
+    { name: 'pl', title: 'Плотность (°P)', type: 'number', hidden: onlyFor('beer'), validation: (rule: NumberRule) => [
       rule.min(0).error('Плотность не может быть меньше 0°P'),
       rule.max(30).error('Плотность не может быть больше 30°P'),
     ] },
@@ -63,3 +68,5 @@ export default {
 
   ]
 }
+
+export default product

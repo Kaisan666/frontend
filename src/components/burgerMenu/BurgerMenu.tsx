@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react"
+import React, { useSyncExternalStore } from "react"
 import styles from "./BurgerMenu.module.scss"
 import Link from "next/link"
 import { navLinks } from "@/app/data/Link"
@@ -14,13 +14,13 @@ type Props = {
   settings: SiteSettings
 }
 
-export const BurgerMenu = ({ isOpen, toggleBurger, settings }: Props) => {
-  const [isMounted, setIsMounted] = useState(false)
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
+const subscribeNoop = () => () => {}
+const getClient = () => true
+const getServer = () => false
 
-  if (!isMounted) {
+export const BurgerMenu = ({ isOpen, toggleBurger, settings }: Props) => {
+  const isClient = useSyncExternalStore(subscribeNoop, getClient, getServer)
+  if (!isClient) {
     return null
   }
 

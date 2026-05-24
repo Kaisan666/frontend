@@ -1,4 +1,4 @@
-export default {
+const event = {
     name : "event",
     title: "Событие",
     type: "document",
@@ -47,3 +47,5 @@ export default {
     },
     ]
 }
+
+export default event
