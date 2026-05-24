@@ -17,6 +17,7 @@ import { AgeGate } from "@/components/AgeGate";
 import { CookieBanner } from "@/components/CookieBanner";
 
 import YandexMetrika from "../modules/YandexMetrika";
+import PathTracker from "../modules/PathTracker";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://shengenplus.ru";
 
@@ -137,6 +138,7 @@ export default async function MainLayout({
           <Footer />
         </PopupProvider>
         <YandexMetrika />
+        <PathTracker />
         <AgeGate />
         <CookieBanner />
       </body>

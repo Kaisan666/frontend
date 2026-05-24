@@ -2,6 +2,7 @@
 // Все функции безопасны для SSR — проверяют typeof window перед обращением.
 
 const SESSION_KEY = "shengen_session_id"
+export const PREV_PATH_KEY = "shengen_prev_path"
 
 /**
  * Возвращает уникальный идентификатор сессии для текущего браузера.
@@ -46,11 +47,26 @@ export function getDeviceType(): DeviceType {
 }
 
 /**
- * Возвращает referrer текущей загрузки.
- * Пустая строка, если переход прямой или из приватного источника.
+ * Возвращает источник перехода для текущей страницы.
+ *
+ * Приоритет — внутренний предыдущий путь из sessionStorage (его пишет
+ * PathTracker при SPA-навигации), потому что document.referrer для
+ * client-side переходов в Next.js не обновляется и хранит только URL
+ * самой первой загрузки.
+ *
+ * Фолбэк — document.referrer для случая прямого захода на страницу
+ * товара (например, по ссылке из соцсетей).
  */
 export function getReferrer(): string {
-  if (typeof document === "undefined") return ""
+  if (typeof window === "undefined") return ""
+
+  try {
+    const prev = window.sessionStorage.getItem(PREV_PATH_KEY)
+    if (prev) return prev
+  } catch {
+    // sessionStorage недоступен — идём к document.referrer
+  }
+
   return document.referrer || ""
 }
 

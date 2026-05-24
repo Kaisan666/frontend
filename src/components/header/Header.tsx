@@ -7,6 +7,7 @@ import Link from "next/link";
 import { BurgerMenu } from "../burgerMenu";
 import { BookingLink } from "../BookingLink";
 import type { SiteSettings } from "@/sanity/lib/getSiteSettings";
+import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 
 // Должно совпадать с $tablet в src/styles/variables.scss
 const TABLET_BREAKPOINT = 1024;
@@ -18,6 +19,7 @@ type Props = {
 export const Header = ({ settings }: Props) => {
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const isHidden = useHideOnScroll();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -43,8 +45,9 @@ export const Header = ({ settings }: Props) => {
   }
 
   return (
-    <header className={`${styles["header"]} container`}>
-      <div className={styles["header__inner"]}>
+    <div className={`${styles["wrapper"]} ${isHidden ? styles["hidden"] : ""}`}>
+      <header className={`${styles["header"]} container`}>
+        <div className={styles["header__inner"]}>
         <Link href="/" className="accent-button">
           Лого
         </Link>
@@ -86,7 +89,8 @@ export const Header = ({ settings }: Props) => {
           </BookingLink>
         )}
       </div>
-      <BurgerMenu isOpen={isBurgerOpen} toggleBurger={toggleBurgerMenu} settings={settings} />
-    </header>
+        <BurgerMenu isOpen={isBurgerOpen} toggleBurger={toggleBurgerMenu} settings={settings} />
+      </header>
+    </div>
   );
 };

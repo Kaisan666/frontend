@@ -12,6 +12,7 @@ import { FiltersChart } from "./FiltersChart"
 import { HeatmapChart } from "./HeatmapChart"
 import { TimeDistributionChart } from "./TimeDistributionChart"
 import { InsightCards } from "./InsightCards"
+import { AiReportSection } from "./AiReportSection"
 
 type Totals = {
   views: number
@@ -133,6 +134,8 @@ export default function StatsPage() {
           <p className={styles["stats__period-info"]}>
             Период: {data.period.from} — {data.period.to}
           </p>
+
+          <AiReportSection />
         </>
       )}
     </div>

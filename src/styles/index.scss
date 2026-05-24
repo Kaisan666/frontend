@@ -1,9 +1,19 @@
+:root {
+    --header-height: 70px;
+}
+
+@media (max-width: 764px) {
+    :root {
+        --header-height: 60px;
+    }
+}
+
 .container{
     max-width: 1420px;
     padding-inline: 10px;
     margin-inline: auto;
     width: 100%;
-    
+
 }
 body{
     font-family: $openSans;
@@ -18,6 +28,7 @@ body {
 
 main {
   flex: 1; // занимает всё свободное пространство
+  padding-top: var(--header-height);
 }
 .catalog-layout{
     display: grid;
