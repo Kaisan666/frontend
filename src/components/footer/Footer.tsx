@@ -1,6 +1,7 @@
 import React from "react"
 import styles from "./Footer.module.scss"
 import Link from "next/link"
+import Image from "next/image"
 import { MapPin, Clock, Phone } from "lucide-react"
 import { FaVk, FaTelegram, FaWhatsapp } from "react-icons/fa"
 import { getSiteSettings, phoneForTel } from "@/sanity/lib/getSiteSettings"
@@ -70,13 +71,13 @@ export const Footer = async () => {
         <div className={styles["footer__maps"]}>
           {maps?.yandex && (
             <a href={maps.yandex} target="_blank" rel="noopener noreferrer" className={styles["footer__maps-item"]}>
-              <img src="/icons/yaMaps.svg" alt="я.карты" />
+              <Image src="/icons/yaMaps.svg" alt="я.карты" width={45} height={45} />
               Яндекс.Карты
             </a>
           )}
           {maps?.twoGis && (
             <a href={maps.twoGis} target="_blank" rel="noopener noreferrer" className={styles["footer__maps-item"]}>
-              <img src="/icons/2gis.svg" alt="2ГИС" />
+              <Image src="/icons/2gis.svg" alt="2ГИС" width={45} height={45} />
               2ГИС
             </a>
           )}

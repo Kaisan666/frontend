@@ -1,6 +1,8 @@
 export type Product = {
   id: string;
-  style?: string;
+  // style — массив названий стилей пива; в Sanity это reference[] на beerStyle,
+  // GROQ-запросы дереференсят в массив строк через `style[]->title`.
+  style?: string[];
   country?: string;
   abv?: number;
   ibu?: number;

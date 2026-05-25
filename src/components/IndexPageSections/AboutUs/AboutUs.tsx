@@ -1,9 +1,13 @@
 import React from "react"
 import styles from "./AboutUs.module.scss"
-import { ReviewSwiper } from "@/components/Swipers/reviewsSwiper"
-import { reviews } from "@/app/data/Reviews"
+import { ReviewSwiper, type Review } from "@/components/Swipers/reviewsSwiper"
+import { ReviewForm } from "@/components/ReviewForm"
 
-export const AboutUs = () => {
+type Props = {
+  reviews: Review[]
+}
+
+export const AboutUs = ({ reviews }: Props) => {
   return (
     <section className={styles["about-us"]}>
       <div className="section-header container">
@@ -52,6 +56,9 @@ export const AboutUs = () => {
           </h3>
         </div>
         <ReviewSwiper reviews={reviews} />
+        <div className="container">
+          <ReviewForm />
+        </div>
       </div>
     </section>
   )

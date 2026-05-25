@@ -18,7 +18,8 @@ const getProduct = cache(async (slug: string): Promise<Product | null> => {
   return client.fetch<Product | null>(
     `*[_type == "product" && slug.current == $slug][0]{
       ...,
-      "imageUrl": image.asset->url
+      "imageUrl": image.asset->url,
+      "style": style[]->title
     }`,
     { slug },
   );
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const isBeer = product.category === "beer";
   const subtitle = isBeer
-    ? [product.style, product.country].filter(Boolean).join(" · ")
+    ? [product.style?.join(", "), product.country].filter(Boolean).join(" · ")
     : null;
 
   const descParts = [
@@ -65,15 +66,16 @@ export default async function ProductPage({ params }: PageProps) {
   const isBeer = product.category === "beer";
 
   const similarProducts: Product[] = await client.fetch(
-    `*[_type == "product" && slug.current != $slug && (style == $style || category == $category)][0...4]{
+    `*[_type == "product" && slug.current != $slug && (count(style[@->title in $styles]) > 0 || category == $category)][0...4]{
       ...,
       "id": _id,
       "imageUrl": image.asset->url,
-      "slug": slug.current
+      "slug": slug.current,
+      "style": style[]->title
     }`,
     {
       slug,
-      style: product.style ?? "",
+      styles: product.style ?? [],
       category: product.category,
     },
   );
@@ -87,6 +89,8 @@ export default async function ProductPage({ params }: PageProps) {
 
       <div className={styles["product-detail__content"]}>
         <div className={styles["product-detail__media"]}>
+          {/* next/image с fill ломает flex-центровку, а с явными width/height нужны размеры из Sanity. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={product.imageUrl}
             alt={product.name}
@@ -97,10 +101,10 @@ export default async function ProductPage({ params }: PageProps) {
         <div className={styles["product-detail__info"]}>
           <h1 className={styles["product-detail__name"]}>{product.name}</h1>
 
-          {isBeer && (product.style || product.country) && (
+          {isBeer && (!!product.style?.length || product.country) && (
             <p className={styles["product-detail__subtitle"]}>
-              {product.style}
-              {product.style && product.country && " · "}
+              {product.style?.join(", ")}
+              {!!product.style?.length && product.country && " · "}
               {product.country && (
                 <Link href={`/catalog?country=${product.country}`}>
                   {product.country}

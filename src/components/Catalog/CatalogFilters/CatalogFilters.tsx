@@ -33,9 +33,9 @@ async function fetchCount(pending: Record<string, string>): Promise<number> {
   for (const [k, v] of Object.entries(pending)) {
     if (!v) continue
     if (k === "style") {
-      // style может содержать несколько значений через запятую/слэш ("Эль, Ламбик")
-      // match ищет токен как отдельное слово, без чувствительности к регистру
-      conditions.push(`style match $style`)
+      // style — массив reference на beerStyle. Проверяем, есть ли среди
+      // дереференснутых title выбранное значение.
+      conditions.push(`$style in style[]->title`)
       params.style = v
     } else {
       conditions.push(`${k} == $${k}`)

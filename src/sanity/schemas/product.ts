@@ -48,7 +48,13 @@ const product = {
     { name: 'fat', title: 'Жиры (г)', type: 'number' },
     { name: 'carbs', title: 'Углеводы (г)', type: 'number' },
     // только пиво
-    { name: 'style', title: 'Стиль', type: 'string', hidden: onlyFor('beer') },
+    {
+      name: 'style',
+      title: 'Стиль',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'beerStyle' }] }],
+      hidden: onlyFor('beer'),
+    },
     { name: 'country', title: 'Страна', type: 'string', hidden: onlyFor('beer') },
     { name: 'abv', title: 'Крепость (ABV)', type: 'number', hidden: onlyFor('beer') },
     { name: 'ibu', title: 'Горечь (IBU)', type: 'number', hidden: onlyFor('beer') },

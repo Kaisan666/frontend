@@ -19,22 +19,24 @@ type PageSearchProps = {
 }
 
 export default async function CatalogPage({ searchParams }: PageSearchProps) {
-  const products = await client.fetch<Product[]>(`
-    *[_type == "product"]{
-      ...,
-      "id": _id,
-      "imageUrl": image.asset->url,
-      "slug": slug.current
-    }
-  `)
+  // Тянем товары и список стилей параллельно. Стили — источник правды теперь
+  // коллекция beerStyle, а не уникальные значения из самих товаров.
+  const [products, beerStyles] = await Promise.all([
+    client.fetch<Product[]>(`
+      *[_type == "product"]{
+        ...,
+        "id": _id,
+        "imageUrl": image.asset->url,
+        "slug": slug.current,
+        "style": style[]->title
+      }
+    `),
+    client.fetch<string[]>(`*[_type == "beerStyle"] | order(title asc).title`),
+  ])
 
   const filters = {
     categories: [...new Set(products.map(p => p.category).filter(Boolean))] as string[],
-    styles: [...new Set(
-      products.flatMap(p =>
-        p.style ? p.style.split(/[,\/]/).map(s => s.trim()).filter(Boolean) : []
-      )
-    )],
+    styles: beerStyles,
     country: [...new Set(products.map(p => p.country).filter(Boolean))] as string[],
     abv: [...new Set(products.map(p => p.abv).filter((v): v is number => v != null))],
     ibu: [...new Set(products.map(p => p.ibu).filter((v): v is number => v != null))],
@@ -42,12 +44,6 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
 
   const params = await searchParams
   let filteredProducts: Product[] = products
-
-  const splitTokens = (raw?: string) =>
-    (raw ?? "")
-      .split(/[,\/]/)
-      .map(s => s.trim())
-      .filter(Boolean)
 
   for (const key in params) {
     const k = key as keyof SearchParams
@@ -57,7 +53,7 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
     filteredProducts = filteredProducts.filter(product => {
       if (k === "minPrice") return product.price >= Number(value)
       if (k === "maxPrice") return product.price <= Number(value)
-      if (k === "style") return splitTokens(product.style).includes(value)
+      if (k === "style") return product.style?.includes(value) ?? false
       return String(product[k as keyof Product]) === value
     })
   }

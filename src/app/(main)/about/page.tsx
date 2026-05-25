@@ -1,7 +1,8 @@
 import styles from "./page.module.scss";
 import { Beer, CalendarDays, Globe } from "lucide-react";
-import { ReviewSwiper } from "@/components/Swipers/reviewsSwiper";
-import { reviews } from "@/app/data/Reviews";
+import { ReviewSwiper, type Review } from "@/components/Swipers/reviewsSwiper";
+import { ReviewForm } from "@/components/ReviewForm";
+import { client } from "@/sanity/lib/client";
 
 export const metadata = {
   title: "О нас — Shengen+",
@@ -31,7 +32,16 @@ const stats = [
 { value: "23:00", label: "до закрытия" },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const reviews = await client.fetch<Review[]>(`
+    *[_type == "review"] | order(submittedAt desc) [0...20] {
+      "id": _id,
+      authorName,
+      text,
+      submittedAt
+    }
+  `);
+
   return (
     <div className={styles.about}>
 
@@ -76,6 +86,9 @@ export default function AboutPage() {
           <h2 className={styles.about__section_title}>Что пишут о нас</h2>
         </div>
         <ReviewSwiper reviews={reviews} />
+        <div className="container">
+          <ReviewForm />
+        </div>
       </section>
 
     </div>

@@ -6,17 +6,32 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import styles from "./ReviewsSwiper.module.scss";
 
-interface Review {
+export type Review = {
+  id: string;
+  authorName: string;
   text: string;
-  service: string;
-  date: string;
+  submittedAt: string;
 }
 
 interface ReviewSwiperProps {
   reviews: Review[];
 }
 
+const formatDate = (iso: string) => {
+  try {
+    return new Date(iso).toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return "";
+  }
+};
+
 export const ReviewSwiper = ({ reviews }: ReviewSwiperProps) => {
+  if (!reviews.length) return null;
+
   return (
     <div className={`${styles['reviews-swiper__outer']}`}>
       <Swiper
@@ -25,12 +40,12 @@ export const ReviewSwiper = ({ reviews }: ReviewSwiperProps) => {
       slidesPerView={"auto"}
       className={`${styles.swiper} container`}
     >
-      {reviews.map((review, index) => (
-        <SwiperSlide key={index} className={styles['reviews-swiper__slide']}>
+      {reviews.map((review) => (
+        <SwiperSlide key={review.id} className={styles['reviews-swiper__slide']}>
           <p>{review.text}</p>
           <div className={styles['reviews-swiper__slide-footer']}>
-            <span>{review.service}</span>
-          <span>{review.date}</span>
+            <span>{review.authorName}</span>
+            <span>{formatDate(review.submittedAt)}</span>
           </div>
         </SwiperSlide>
       ))}

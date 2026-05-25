@@ -5,6 +5,31 @@ const SESSION_KEY = "shengen_session_id"
 export const PREV_PATH_KEY = "shengen_prev_path"
 
 /**
+ * Генерирует UUID v4. crypto.randomUUID() есть только в secure context
+ * (HTTPS или localhost), поэтому на dev-сервере по IP/HTTP падает.
+ * Фолбэк через crypto.getRandomValues — работает везде, где есть Web Crypto.
+ */
+function randomUuid(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID()
+  }
+  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+    const bytes = new Uint8Array(16)
+    crypto.getRandomValues(bytes)
+    bytes[6] = (bytes[6] & 0x0f) | 0x40 // version 4
+    bytes[8] = (bytes[8] & 0x3f) | 0x80 // variant RFC4122
+    const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`
+  }
+  // Последний рубеж — древние браузеры без Web Crypto. Для session-id хватит.
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === "x" ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+/**
  * Возвращает уникальный идентификатор сессии для текущего браузера.
  * Хранится в localStorage и переживает перезагрузки страницы.
  * Если localStorage недоступен (SSR / приватный режим) — отдаёт случайный uuid,
@@ -17,12 +42,12 @@ export function getSessionId(): string {
     const existing = window.localStorage.getItem(SESSION_KEY)
     if (existing) return existing
 
-    const fresh = crypto.randomUUID()
+    const fresh = randomUuid()
     window.localStorage.setItem(SESSION_KEY, fresh)
     return fresh
   } catch {
     // localStorage может бросать в приватном режиме / при отключённых cookies
-    return crypto.randomUUID()
+    return randomUuid()
   }
 }
 
