@@ -53,5 +53,10 @@ function unauthorized() {
 }
 
 export const config = {
-  matcher: ["/stats/:path*", "/api/stats/:path*"],
+  matcher: [
+    "/stats/:path*",
+    "/api/stats/:path*",
+    "/api/generate-report/:path*",
+    "/api/ai-reports/:path*",
+  ],
 }

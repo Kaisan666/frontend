@@ -1,5 +1,7 @@
+import { Suspense } from "react"
 import { CatalogFilters } from "@/components/Catalog/CatalogFilters"
 import { CatalogGrid } from "@/components/Catalog/CatalogGrid"
+import { FilterContextCapture } from "@/components/FilterContextCapture"
 import styles from "./catalog.module.scss"
 import { client } from "@/sanity/lib/client"
 import { Product } from "@/types/product"
@@ -60,6 +62,11 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
 
   return (
     <main className={`${styles["catalog"]} container`}>
+      {/* Захватываем применённые фильтры в sessionStorage, чтобы ProductMetric
+          на странице товара мог их использовать. useSearchParams требует Suspense. */}
+      <Suspense fallback={null}>
+        <FilterContextCapture />
+      </Suspense>
       <CatalogFilters filters={filters} />
       <CatalogGrid products={filteredProducts} />
     </main>

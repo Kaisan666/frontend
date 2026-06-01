@@ -4,6 +4,11 @@
 const SESSION_KEY = "shengen_session_id"
 export const PREV_PATH_KEY = "shengen_prev_path"
 
+// FilterContextCapture на /catalog пишет сюда применённые фильтры с timestamp.
+// ProductMetric на /products/<slug> читает и использует, если контекст не протух.
+export const FILTER_CONTEXT_KEY = "shengen_last_filters"
+const FILTER_CONTEXT_TTL_MS = 5 * 60 * 1000 // 5 минут
+
 /**
  * Генерирует UUID v4. crypto.randomUUID() есть только в secure context
  * (HTTPS или localhost), поэтому на dev-сервере по IP/HTTP падает.
@@ -96,18 +101,34 @@ export function getReferrer(): string {
 }
 
 /**
- * Извлекает применённые фильтры из URL search params.
- * Возвращает объект с теми ключами, что есть в текущем URL.
+ * Возвращает применённые фильтры в момент захода на товар.
+ *
+ * Источник правды — sessionStorage, куда FilterContextCapture на /catalog пишет
+ * текущие URL search params. На странице товара URL уже чистый (без ?style=...),
+ * поэтому читать `window.location.search` тут бесполезно.
+ *
+ * TTL 5 минут — чтобы старый контекст из давней сессии не «прилипал» к товару,
+ * который юзер открыл из закладок / соцсетей.
  */
 export function getAppliedFilters(): Record<string, string> {
   if (typeof window === "undefined") return {}
 
-  const params = new URLSearchParams(window.location.search)
-  const result: Record<string, string> = {}
-  params.forEach((value, key) => {
-    result[key] = value
-  })
-  return result
+  try {
+    const stored = window.sessionStorage.getItem(FILTER_CONTEXT_KEY)
+    if (stored) {
+      const parsed = JSON.parse(stored) as {
+        filters: Record<string, string>
+        timestamp: number
+      }
+      if (Date.now() - parsed.timestamp < FILTER_CONTEXT_TTL_MS) {
+        return parsed.filters
+      }
+    }
+  } catch {
+    // sessionStorage недоступен / битый JSON — возвращаем пустой объект
+  }
+
+  return {}
 }
 
 /**
