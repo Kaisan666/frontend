@@ -13,6 +13,7 @@ const DEFAULT = "default"
 
 const OPTIONS = [
   { value: DEFAULT, label: "По умолчанию" },
+  { value: "popular", label: "Сначала популярные" },
   { value: "price_asc", label: "Сначала дешёвые" },
   { value: "price_desc", label: "Сначала дорогие" },
   { value: "name_asc", label: "Название: А–Я" },
