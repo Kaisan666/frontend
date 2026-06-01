@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import { CatalogFilters } from "@/components/Catalog/CatalogFilters"
 import { CatalogGrid } from "@/components/Catalog/CatalogGrid"
+import { CatalogSort } from "@/components/Catalog/CatalogSort"
 import { FilterContextCapture } from "@/components/FilterContextCapture"
 import styles from "./catalog.module.scss"
 import { client } from "@/sanity/lib/client"
@@ -14,6 +15,7 @@ type SearchParams = {
   ibu?: string
   minPrice?: string
   maxPrice?: string
+  sort?: string
 }
 
 type PageSearchProps = {
@@ -51,6 +53,9 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
     const k = key as keyof SearchParams
     const value = params[k]
     if (!value) continue
+    // sort — не фильтр; пропускаем, иначе цикл попытается фильтровать товары
+    // по несуществующему полю и обнулит выдачу.
+    if (k === "sort") continue
 
     filteredProducts = filteredProducts.filter(product => {
       if (k === "minPrice") return product.price >= Number(value)
@@ -58,6 +63,18 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
       if (k === "style") return product.style?.includes(value) ?? false
       return String(product[k as keyof Product]) === value
     })
+  }
+
+  // Сортировка поверх отфильтрованного. Дефолт — порядок Sanity (без sort).
+  // По названию — localeCompare('ru'), чтобы кириллица шла правильно (А, Б, В…).
+  if (params.sort === "price_asc") {
+    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price)
+  } else if (params.sort === "price_desc") {
+    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price)
+  } else if (params.sort === "name_asc") {
+    filteredProducts = [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name, "ru"))
+  } else if (params.sort === "name_desc") {
+    filteredProducts = [...filteredProducts].sort((a, b) => b.name.localeCompare(a.name, "ru"))
   }
 
   return (
@@ -68,7 +85,10 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
         <FilterContextCapture />
       </Suspense>
       <CatalogFilters filters={filters} />
-      <CatalogGrid products={filteredProducts} />
+      <div className={styles["catalog__content"]}>
+        <CatalogSort />
+        <CatalogGrid products={filteredProducts} />
+      </div>
     </main>
   )
 }

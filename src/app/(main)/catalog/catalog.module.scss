@@ -8,3 +8,15 @@
     flex-direction: column;
   }
 }
+
+.catalog__content {
+  flex: 1;
+  min-width: 0; // чтобы сетка могла ужиматься внутри flex, а не распирать строку
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
