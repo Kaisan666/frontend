@@ -1,7 +1,9 @@
 import styles from "./page.module.scss";
 import { Hero } from "@/components/IndexPageSections/Hero";
+import { WhyUs } from "@/components/IndexPageSections/WhyUs";
 import { BeersMenu } from "@/components/IndexPageSections/BeersMenu";
 import { FoodMenu } from "@/components/IndexPageSections/FoodMenu";
+import { Atmosphere } from "@/components/IndexPageSections/Atmosphere";
 import { AboutUs } from "@/components/IndexPageSections/AboutUs";
 import { client } from "@/sanity/lib/client";
 import { Product } from "@/types/product";
@@ -10,6 +12,7 @@ import type { Review } from "@/components/Swipers/reviewsSwiper";
 type HomepageData = {
   featuredBeers?: Product[];
   featuredFoods?: Product[];
+  gallery?: { url: string; width: number; height: number }[];
 };
 
 export default async function Home() {
@@ -28,6 +31,11 @@ export default async function Home() {
           "id": _id,
           "imageUrl": image.asset->url,
           "slug": slug.current
+        },
+        "gallery": gallery[]{
+          "url": asset->url,
+          "width": asset->metadata.dimensions.width,
+          "height": asset->metadata.dimensions.height
         }
       }
     `),
@@ -44,8 +52,10 @@ export default async function Home() {
   return (
     <div className={`${styles["main-page"]}`}>
       <Hero />
+      <WhyUs />
       <BeersMenu products={data?.featuredBeers ?? []} />
       <FoodMenu products={data?.featuredFoods ?? []} />
+      <Atmosphere images={data?.gallery ?? []} />
       <AboutUs reviews={reviews} />
     </div>
   );

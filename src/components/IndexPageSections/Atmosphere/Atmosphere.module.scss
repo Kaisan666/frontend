@@ -1,0 +1,36 @@
+.atmosphere {
+  margin-top: 48px;
+
+  &__outer {
+    overflow: hidden;
+    padding-left: 20px;
+  }
+
+  &__swiper {
+    overflow: visible;
+  }
+
+  // Ширина слайда — по картинке (slidesPerView: "auto"), высота фиксированная.
+  &__slide {
+    width: auto;
+    height: 400px;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+
+  &__img {
+    height: 100%;
+    width: auto;
+    display: block;
+  }
+
+  @media (max-width: $mobile) {
+    margin-top: 32px;
+
+    &__slide {
+      height: 300px;
+      border-radius: 12px;
+    }
+  }
+}

@@ -4,6 +4,7 @@ import styles from "./Header.module.scss";
 import { navLinks } from "@/app/data/Link";
 import "@/styles/components/accentButton.scss";
 import Link from "next/link";
+import Image from "next/image";
 import { BurgerMenu } from "../burgerMenu";
 import { BookingLink } from "../BookingLink";
 import type { SiteSettings } from "@/sanity/lib/getSiteSettings";
@@ -49,8 +50,15 @@ export const Header = ({ settings }: Props) => {
     <div className={`${styles["wrapper"]} ${isHidden ? styles["hidden"] : ""}`}>
       <header className={`${styles["header"]} container`}>
         <div className={styles["header__inner"]}>
-        <Link href="/" className="accent-button">
-          Лого
+        <Link href="/" className={styles["header__logo"]} aria-label="Shengen+ — на главную">
+          <Image
+            src="/icons/shengenPlusLogo.svg"
+            alt="Shengen+"
+            width={400}
+            height={146}
+            priority
+            unoptimized
+          />
         </Link>
 
         {isMobile ? null : (

@@ -1,5 +1,6 @@
 "use client"
 import React from "react"
+import Link from "next/link"
 import { getSessionId, getDeviceType, sendEvent } from "@/lib/tracking"
 
 type Props = {
@@ -8,8 +9,9 @@ type Props = {
   source: string // 'header_desktop' | 'header_mobile' | etc. — где висит этот CTA
 }
 
-const TAPLINK_URL = "https://taplink.cc/shengenplus"
-
+// «Забронировать» ведёт на страницу контактов (адрес, телефон, карты) — taplink
+// убрали как лишнюю прослойку. Клик всё так же фиксируем как booking_click,
+// чтобы метрика конверсии на дашборде сохранила смысл.
 export const BookingLink = ({ className, children, source }: Props) => {
   const handleClick = () => {
     sendEvent("/api/track", {
@@ -21,14 +23,8 @@ export const BookingLink = ({ className, children, source }: Props) => {
   }
 
   return (
-    <a
-      href={TAPLINK_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={className}
-      onClick={handleClick}
-    >
+    <Link href="/contacts" className={className} onClick={handleClick}>
       {children}
-    </a>
+    </Link>
   )
 }

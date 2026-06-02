@@ -35,6 +35,12 @@ const homepage = {
       ],
       validation: (rule: ArrayRule<unknown[]>) => rule.max(6),
     },
+    {
+      name: 'gallery',
+      title: 'Галерея «Наша атмосфера» (главная)',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
+    },
   ],
   preview: {
     prepare: () => ({ title: 'Главная страница' }),

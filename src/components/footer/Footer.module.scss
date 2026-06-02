@@ -7,6 +7,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    @media (max-width: $mobile) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
+    }
+  }
+  &__logo {
+    display: inline-flex;
+    flex-shrink: 0;
+
+    img {
+      height: 125px;
+      width: auto;
+      // Лого тёмное (#0b0704) — на тёмном фоне футера красим в белый.
+      filter: brightness(0) invert(1);
+    }
   }
   &__contacts{
     display: flex;

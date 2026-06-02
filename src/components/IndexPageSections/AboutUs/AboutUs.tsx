@@ -1,7 +1,7 @@
 import React from "react"
+import Link from "next/link"
 import styles from "./AboutUs.module.scss"
 import { ReviewSwiper, type Review } from "@/components/Swipers/reviewsSwiper"
-import { ReviewForm } from "@/components/ReviewForm"
 
 type Props = {
   reviews: Review[]
@@ -11,55 +11,12 @@ export const AboutUs = ({ reviews }: Props) => {
   return (
     <section className={styles["about-us"]}>
       <div className="section-header container">
-        <h2 className={`${styles["about-us__title"]} section-header__title`}>
-          Место, где живёт настоящее пиво
-        </h2>
+        <h2 className={styles["about-us__title"]}>Что пишут о нас</h2>
+        <Link href="/about" className="accent-link">
+          Подробнее о нас →
+        </Link>
       </div>
-      <div className={`${styles["about-us__content"]} container`}>
-        <div className={styles["about-us__main"]}>
-          <p className={styles["about-us__description"]}>
-            Shengen+ — пивной бар в Краснодаре. 150+ сортов крафтового и
-            импортного пива из 18 стран. Приходи один или с компанией — у нас
-            комфортно всем.
-          </p>
-          <ul className={styles["about-us__features"]}>
-            <li className={styles["about-us__features-item"]}>
-              <p className={styles["about-us__features-item-text"]}>
-                Уютная атмосфера
-              </p>
-            </li>
-            <li className={styles["about-us__features-item"]}>
-              <p className={styles["about-us__features-item-text"]}>
-                Разнообразный ассортимент
-              </p>
-            </li>
-            <li className={styles["about-us__features-item"]}>
-              <p className={styles["about-us__features-item-text"]}>
-                Вкусная кухня до последнего гостя
-              </p>
-            </li>
-            <li className={styles["about-us__features-item"]}>
-              <p className={styles["about-us__features-item-text"]}>
-                Открыты каждый день до 23:00
-              </p>
-            </li>
-          </ul>
-          {/* <Link href="/about" className={styles["about-us__more"]}>
-            Подробнее о нас →
-          </Link> */}
-        </div>
-      </div>
-      <div className={styles["about-us__comments"]}>
-        <div className={`${styles["about-us__comments-title"]} container section-header`}>
-          <h3 className={styles["about-us__comments-title-text"]}>
-            Что пишут о нас
-          </h3>
-        </div>
-        <ReviewSwiper reviews={reviews} />
-        <div className="container">
-          <ReviewForm />
-        </div>
-      </div>
+      <ReviewSwiper reviews={reviews} />
     </section>
   )
 }

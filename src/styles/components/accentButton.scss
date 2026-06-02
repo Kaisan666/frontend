@@ -24,3 +24,20 @@
         font-size: 14px;
     }
 }
+
+// Текстовая акцентная ссылка — для второстепенных CTA (в каталог, подробнее).
+// В отличие от .accent-button (залитая кнопка), это просто жирный акцентный текст.
+.accent-link{
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+    color: $orange;
+    white-space: nowrap;
+    transition: color 0.18s ease-in-out;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover{
+            color: $brown;
+        }
+    }
+}

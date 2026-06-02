@@ -10,7 +10,7 @@
 
 .container{
     max-width: 1420px;
-    padding-inline: 10px;
+    padding-inline: 20px;
     margin-inline: auto;
     width: 100%;
 
@@ -46,9 +46,6 @@ main {
         font-size: 48px;
         font-weight: 700;
         color: $brown;
-    }
-    .accent-button{
-        padding: 15px;
     }
     @media screen and (max-width: 764px) {
         &__title{

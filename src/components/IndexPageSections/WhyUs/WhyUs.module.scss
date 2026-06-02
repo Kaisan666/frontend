@@ -1,0 +1,43 @@
+.why-us {
+  margin-top: 48px;
+
+  &__grid {
+    display: flex;
+    gap: 32px;
+
+    @media (max-width: $mobile) {
+      flex-direction: column;
+      gap: 24px;
+    }
+  }
+
+  &__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba($orange, 0.12);
+    color: $orange;
+  }
+
+  &__title {
+    font-size: 22px;
+    font-weight: 700;
+    color: $brown;
+  }
+
+  &__text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: $brown;
+  }
+}

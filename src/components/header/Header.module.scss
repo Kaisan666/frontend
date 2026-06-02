@@ -23,7 +23,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
+  }
+  &__logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    img {
+      height: 42px;
+      width: auto;
+    }
+
+    @media (max-width: 764px) {
+      img {
+        height: 34px;
+      }
+    }
   }
   &__pages {
     &-link{

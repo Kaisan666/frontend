@@ -15,8 +15,8 @@ export const FoodMenu = ({ products }: Props) => {
     <section className={`${styles["food-menu"]} container`}>
       <div className="section-header">
         <h2 className={"section-header__title"}>Популярное</h2>
-        <Link className="accent-button" href={"/catalog?category=food"}>
-          В каталог
+        <Link className="accent-link" href={"/catalog?category=food"}>
+          В каталог →
         </Link>
       </div>
       <div className="catalog-layout">

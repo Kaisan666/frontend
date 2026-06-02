@@ -14,9 +14,15 @@ export const Footer = async () => {
     <footer className={styles["footer"]}>
       <div className={`${styles["footer__inner"]} container`}>
         <div className={styles["footer__main"]}>
-          {/* <Link href="/">
-            <img src="" alt="логотип" />
-          </Link> */}
+          <Link href="/" className={styles["footer__logo"]} aria-label="Shengen+ — на главную">
+            <Image
+              src="/icons/shengenPlusLogo.svg"
+              alt="Shengen+"
+              width={400}
+              height={146}
+              unoptimized
+            />
+          </Link>
           <div className={styles["footer__contacts"]}>
             <ul className={styles["footer__info"]}>
               {address && (
