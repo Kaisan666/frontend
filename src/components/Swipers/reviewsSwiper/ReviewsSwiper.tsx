@@ -37,7 +37,12 @@ export const ReviewSwiper = ({ reviews }: ReviewSwiperProps) => {
       <Swiper
       modules={[Navigation, Pagination]}
       spaceBetween={24}
-      slidesPerView={"auto"}
+      // Мобилка (<765px) — ровно 1.5 карточки, чтобы было видно, что список
+      // листается. Десктоп (≥765px) — как было, ширина слайда из CSS ("auto").
+      slidesPerView={1.25}
+      breakpoints={{
+        765: { slidesPerView: "auto" },
+      }}
       className={`${styles.swiper} container`}
     >
       {reviews.map((review) => (
@@ -45,7 +50,7 @@ export const ReviewSwiper = ({ reviews }: ReviewSwiperProps) => {
           <p>{review.text}</p>
           <div className={styles['reviews-swiper__slide-footer']}>
             <span>{review.authorName}</span>
-            <span>{formatDate(review.submittedAt)}</span>
+            <span style={{alignSelf: "flex-end", marginTop: "12px"}}>{formatDate(review.submittedAt)}</span>
           </div>
         </SwiperSlide>
       ))}

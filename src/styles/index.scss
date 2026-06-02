@@ -47,6 +47,9 @@ main {
         font-weight: 700;
         color: $brown;
     }
+    .accent-button{
+        padding: 15px;
+    }
     @media screen and (max-width: 764px) {
         &__title{
             font-size: 32px;

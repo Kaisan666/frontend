@@ -40,6 +40,10 @@
     display: flex;
     gap: 10px;
     justify-content: center;
+
+    @media (max-width: $mobile) {
+      margin-top: 20px;
+    }
     &-item{
         display: flex;
         flex-direction: column;
