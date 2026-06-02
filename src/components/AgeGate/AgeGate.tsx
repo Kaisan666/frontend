@@ -20,6 +20,13 @@ const getStorageConfirmed = () => {
 
 const getServerConfirmed = () => false
 
+// «Гидрированы ли мы» — на сервере и на первом кадре гидрации false, после — true.
+// Канонический приём на useSyncExternalStore (без setState в эффекте): позволяет
+// не рендерить плашку, пока на клиенте не прочитан localStorage.
+const noopSubscribe = () => () => {}
+const getHydrated = () => true
+const getHydratedServer = () => false
+
 export const AgeGate = () => {
   const confirmedInStorage = useSyncExternalStore(
     subscribeStorage,
@@ -27,7 +34,15 @@ export const AgeGate = () => {
     getServerConfirmed,
   )
   const [confirmedNow, setConfirmedNow] = useState(false)
-  const hidden = confirmedInStorage || confirmedNow
+
+  // Сначала проверка — потом отрисовка. Пока не гидрировались на клиенте и не
+  // прочитали localStorage, не рендерим ничего (null на сервере и на первом кадре
+  // гидрации). Иначе модал успевает мелькнуть до того, как мы узнаём, что возраст
+  // уже подтверждён. У подтверждённых плашка не появляется вовсе, у новых — сразу
+  // после гидрации.
+  const hydrated = useSyncExternalStore(noopSubscribe, getHydrated, getHydratedServer)
+
+  const hidden = !hydrated || confirmedInStorage || confirmedNow
 
   // Блокируем скролл страницы только пока модал виден.
   useEffect(() => {
