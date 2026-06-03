@@ -66,5 +66,17 @@
       font-weight: 600;
       margin: 12px 0 6px;
     }
+
+    // Картинки внутри тела события (PortableText) — не растягиваем по высоте,
+    // вертикальные исходники держим в разумных рамках.
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 8px;
+      margin: 12px 0;
+    }
   }
 }

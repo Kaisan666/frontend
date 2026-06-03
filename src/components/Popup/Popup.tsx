@@ -15,6 +15,17 @@ const Popup = ({ children }: { children: React.ReactNode }) => {
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [setIsOpen])
 
+    // Блокируем скролл страницы, пока попап открыт. Иначе фон скроллится под
+    // модалкой, а hide-on-scroll в хедере дёргает шапку. documentElement — как
+    // у бургер-меню в Header.tsx, чтобы лок был консистентным.
+    useEffect(() => {
+        if (!isOpen) return
+        document.documentElement.style.overflow = "hidden"
+        return () => {
+            document.documentElement.style.overflow = ""
+        }
+    }, [isOpen])
+
     if (!isOpen) return null
 
     return (

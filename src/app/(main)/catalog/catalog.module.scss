@@ -4,7 +4,7 @@
   padding-block: 40px;
   align-items: flex-start;
 
-  @media (max-width: 768px) {
+  @media (max-width: $mobile) {
     flex-direction: column;
   }
 }
@@ -16,7 +16,7 @@
   flex-direction: column;
   gap: 20px;
 
-  @media (max-width: 768px) {
+  @media (max-width: $mobile) {
     width: 100%;
   }
 }

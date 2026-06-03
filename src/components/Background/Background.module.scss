@@ -7,7 +7,8 @@
     width: 100%;
     height: 100%;
         transition: 0.3s ease-in-out;
-        z-index: 10;
+        // Затемнение поверх хедера (50); попап (151) лежит выше затемнения.
+        z-index: 150;
 
     &--active{
     opacity: 0.5;
