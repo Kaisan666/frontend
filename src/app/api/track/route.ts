@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { supabase } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabaseAdmin"
 import { mskDate } from "@/lib/date"
 
 // Расширенный трекинг событий. Принимает разные типы:
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
 
     if (body.type === "view") {
       // Старая RPC для совместимости — продолжает считать суммарные просмотры
-      const { error: rpcError } = await supabase.rpc("increment_view", {
+      const { error: rpcError } = await supabaseAdmin.rpc("increment_view", {
         p_name: body.product.name,
         p_category: body.product.category,
         p_price: body.product.price,
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
       if (rpcError) throw rpcError
 
       // Расширенное событие с контекстом — в новую таблицу events_log
-      const { error: eventError } = await supabase.from("events_log").insert({
+      const { error: eventError } = await supabaseAdmin.from("events_log").insert({
         type: "view",
         product_name: body.product.name,
         category: body.product.category,
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
     }
 
     if (body.type === "time_on_page") {
-      const { error } = await supabase.from("events_log").insert({
+      const { error } = await supabaseAdmin.from("events_log").insert({
         type: "time_on_page",
         product_name: body.product.name,
         category: body.product.category,
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
     }
 
     if (body.type === "booking_click") {
-      const { error } = await supabase.from("events_log").insert({
+      const { error } = await supabaseAdmin.from("events_log").insert({
         type: "booking_click",
         session_id: body.session_id,
         device_type: body.device_type,

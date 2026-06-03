@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabaseAdmin"
 
 // Список истории сгенерированных ИИ-отчётов. Защищён proxy.ts.
 // Возвращает максимум 50 последних отчётов — для дашборда хватит за глаза.
 
 export async function GET() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("ai_reports")
     .select("id, period, period_from, period_to, content, model_name, generated_at")
     .order("generated_at", { ascending: false })

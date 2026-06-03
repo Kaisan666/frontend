@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabaseAdmin"
 import { mskDate, mskDateDaysAgo } from "@/lib/date"
 
 // Дашборд /stats тянет всё одной ручкой. Принимает ?period=day|week|month
@@ -113,9 +113,9 @@ export async function GET(request: Request) {
 
   // Три параллельных запроса: текущий период, предыдущий период, исторические сессии (до текущего периода)
   const [current, previous, historical] = await Promise.all([
-    supabase.from("events_log").select(FIELDS).gte("date", from).lte("date", to),
-    supabase.from("events_log").select(FIELDS).gte("date", prevFrom).lte("date", prevTo),
-    supabase.from("events_log").select("session_id").lt("date", from).limit(10000),
+    supabaseAdmin.from("events_log").select(FIELDS).gte("date", from).lte("date", to),
+    supabaseAdmin.from("events_log").select(FIELDS).gte("date", prevFrom).lte("date", prevTo),
+    supabaseAdmin.from("events_log").select("session_id").lt("date", from).limit(10000),
   ])
 
   if (current.error) {

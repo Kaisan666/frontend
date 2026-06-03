@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { chatCompletion } from "@/lib/gigachat"
-import { supabase } from "@/lib/supabase"
+import { supabaseAdmin } from "@/lib/supabaseAdmin"
 
 type Period = "day" | "week" | "month"
 
@@ -179,7 +179,7 @@ export async function POST(request: Request) {
 
   // Сохраняем в Supabase. Если запись не пройдёт — отчёт всё равно вернём,
   // не хотим терять результат генерации из-за технической проблемы хранилища.
-  const { data: saved, error: saveError } = await supabase
+  const { data: saved, error: saveError } = await supabaseAdmin
     .from("ai_reports")
     .insert({
       period,
