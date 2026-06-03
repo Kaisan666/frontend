@@ -3,6 +3,7 @@
 
   &__hero {
     padding-block: 48px 40px;
+    display: grid; // чтобы justify-self у дочерних элементов работал
 
     &_title {
       font-size: 48px;
@@ -19,6 +20,7 @@
       line-height: 1.7;
       color: $darkBrown;
       max-width: 680px;
+      justify-self: center;
     }
 
     @media screen and (max-width: 764px) {
@@ -36,7 +38,7 @@
 
   &__stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin-bottom: 56px;
 
