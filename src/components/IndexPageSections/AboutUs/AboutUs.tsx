@@ -13,7 +13,7 @@ export const AboutUs = ({ reviews }: Props) => {
       <div className="section-header container">
         <h2 className={styles["about-us__title"]}>Что пишут о нас</h2>
         <Link href="/about" className="accent-link">
-          Подробнее о нас →
+          Подробнее о нас
         </Link>
       </div>
       <ReviewSwiper reviews={reviews} />

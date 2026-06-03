@@ -1,4 +1,6 @@
 import { NumberRule } from 'sanity'
+import { SlugAutoInput } from '../components/SlugAutoInput'
+import { CaloriesInput } from '../components/CaloriesInput'
 
 type HiddenContext = { document?: { category?: string } }
 const onlyFor = (cat: 'beer' | 'food') =>
@@ -43,7 +45,12 @@ const product = {
     // только еда
     { name: 'ingredients', title: 'Состав', type: 'text', hidden: onlyFor('food') },
     // питательная ценность
-    { name: 'calories', title: 'Калорийность (ккал)', type: 'number' },
+    {
+      name: 'calories',
+      title: 'Калорийность (ккал)',
+      type: 'number',
+      components: { input: CaloriesInput },
+    },
     { name: 'protein', title: 'Белки (г)', type: 'number' },
     { name: 'fat', title: 'Жиры (г)', type: 'number' },
     { name: 'carbs', title: 'Углеводы (г)', type: 'number' },
@@ -67,9 +74,10 @@ const product = {
   title: 'Slug',
   type: 'slug',
   options: {
-    source: 'name',  // ← автогенерация из названия товара
+    source: 'name',  // ← источник для кнопки Generate
     maxLength: 96,
-  }
+  },
+  components: { input: SlugAutoInput },
 }
 
   ]

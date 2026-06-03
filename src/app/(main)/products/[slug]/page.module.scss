@@ -110,26 +110,25 @@
     font-size: 28px;
     font-weight: 700;
     color: $accentColor;
-    margin-top: auto;
   }
 
-  &__description {
-    margin-top: 32px;
-    background-color: $mainWhite;
-    border-radius: 30px;
-    padding: 30px;
+  // Описание/Состав — внутри правой колонки, компактными блоками с разделителем.
+  &__block {
+    padding-top: 16px;
+    border-top: 1px solid $warmGray;
 
     &-title {
-      font-size: 24px;
+      font-size: 16px;
       font-weight: 700;
       color: $darkBrown;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
 
     &-text {
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1.6;
       color: $brown;
+      white-space: pre-line;
     }
   }
 
@@ -166,11 +165,6 @@
 
     &__price {
       font-size: 24px;
-    }
-
-    &__description {
-      margin-top: 20px;
-      padding: 20px;
     }
 
     &__similar {

@@ -38,8 +38,6 @@ export const CatalogSort = () => {
 
   return (
     <div className={styles["sort"]}>
-      <span className={styles["sort__label"]}>Сортировка</span>
-
       <Select.Root value={current} onValueChange={onValueChange}>
         <Select.Trigger className={styles["trigger"]} aria-label="Сортировка">
           <Select.Value />

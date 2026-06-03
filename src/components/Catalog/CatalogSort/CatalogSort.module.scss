@@ -4,20 +4,6 @@
   gap: 10px;
   margin-left: auto; // прижимаем к правому краю над сеткой
 
-  @media (max-width: $mobile) {
-    width: 100%;
-    margin-left: 0;
-  }
-}
-
-.sort__label {
-  font-family: $openSansC;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: $brown;
-  opacity: 0.7;
-  white-space: nowrap;
 }
 
 // ---- Триггер (закрытое поле) ----
@@ -45,7 +31,6 @@
   }
 
   @media (max-width: $mobile) {
-    flex: 1;
     min-width: 0;
   }
 }

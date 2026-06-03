@@ -168,6 +168,22 @@ export default async function ProductPage({ params }: PageProps) {
             {product.price} ₽
           </p>
 
+          {product.description && (
+            <div className={styles["product-detail__block"]}>
+              <h2 className={styles["product-detail__block-title"]}>Описание</h2>
+              <p className={styles["product-detail__block-text"]}>{product.description}</p>
+            </div>
+          )}
+
+          {product.ingredients && (
+            <div className={styles["product-detail__block"]}>
+              <h2 className={styles["product-detail__block-title"]}>Состав</h2>
+              <p className={styles["product-detail__block-text"]}>{product.ingredients}</p>
+            </div>
+          )}
+
+          {/* БЖУ скрыто намеренно: доставки нет, по закону указывать не обязательно.
+              Чтобы вернуть — раскомментировать блок ниже.
           {(product.calories != null || product.protein != null || product.fat != null || product.carbs != null) && (
             <div className={styles["product-detail__specs"]}>
               {product.calories != null && (
@@ -196,30 +212,9 @@ export default async function ProductPage({ params }: PageProps) {
               )}
             </div>
           )}
+          */}
         </div>
       </div>
-
-      {product.description && (
-        <div className={styles["product-detail__description"]}>
-          <h2 className={styles["product-detail__description-title"]}>
-            Описание
-          </h2>
-          <p className={styles["product-detail__description-text"]}>
-            {product.description}
-          </p>
-        </div>
-      )}
-
-      {product.ingredients && (
-        <div className={styles["product-detail__description"]}>
-          <h2 className={styles["product-detail__description-title"]}>
-            Состав
-          </h2>
-          <p className={styles["product-detail__description-text"]}>
-            {product.ingredients}
-          </p>
-        </div>
-      )}
 
       {similarProducts.length > 0 && (
         <section className={styles["product-detail__similar"]}>

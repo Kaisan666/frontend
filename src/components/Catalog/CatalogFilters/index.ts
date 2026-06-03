@@ -1,1 +1,1 @@
-export {CatalogFilters} from "./CatalogFilters"
+export { CatalogFilters, CatalogFiltersMobile } from "./CatalogFilters"

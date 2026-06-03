@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { unstable_cache } from "next/cache"
-import { CatalogFilters } from "@/components/Catalog/CatalogFilters"
+import { CatalogFilters, CatalogFiltersMobile } from "@/components/Catalog/CatalogFilters"
 import { CatalogGrid } from "@/components/Catalog/CatalogGrid"
 import { CatalogSort } from "@/components/Catalog/CatalogSort"
 import { FilterContextCapture } from "@/components/FilterContextCapture"
@@ -32,11 +32,22 @@ type SearchParams = {
   style?: string
   country?: string
   category?: string
-  abv?: string
-  ibu?: string
+  abvMin?: string
+  abvMax?: string
+  ibuMin?: string
+  ibuMax?: string
   minPrice?: string
   maxPrice?: string
   sort?: string
+}
+
+// Границы числовых фильтров (для слайдеров-диапазонов).
+function numBounds(vals: number[], roundTo = 1) {
+  if (!vals.length) return { min: 0, max: 0 }
+  return {
+    min: Math.floor(Math.min(...vals) / roundTo) * roundTo,
+    max: Math.ceil(Math.max(...vals) / roundTo) * roundTo,
+  }
 }
 
 type PageSearchProps = {
@@ -59,12 +70,17 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
     client.fetch<string[]>(`*[_type == "beerStyle"] | order(title asc).title`),
   ])
 
+  const abvVals = products.map(p => p.abv).filter((v): v is number => v != null)
+  const ibuVals = products.map(p => p.ibu).filter((v): v is number => v != null)
+  const priceVals = products.map(p => p.price).filter((v): v is number => v != null)
+
   const filters = {
     categories: [...new Set(products.map(p => p.category).filter(Boolean))] as string[],
     styles: beerStyles,
     country: [...new Set(products.map(p => p.country).filter(Boolean))] as string[],
-    abv: [...new Set(products.map(p => p.abv).filter((v): v is number => v != null))],
-    ibu: [...new Set(products.map(p => p.ibu).filter((v): v is number => v != null))],
+    abv: numBounds(abvVals, 1),
+    ibu: numBounds(ibuVals, 1),
+    price: numBounds(priceVals, 10),
   }
 
   const params = await searchParams
@@ -81,6 +97,10 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
     filteredProducts = filteredProducts.filter(product => {
       if (k === "minPrice") return product.price >= Number(value)
       if (k === "maxPrice") return product.price <= Number(value)
+      if (k === "abvMin") return product.abv != null && product.abv >= Number(value)
+      if (k === "abvMax") return product.abv != null && product.abv <= Number(value)
+      if (k === "ibuMin") return product.ibu != null && product.ibu >= Number(value)
+      if (k === "ibuMax") return product.ibu != null && product.ibu <= Number(value)
       if (k === "style") return product.style?.includes(value) ?? false
       return String(product[k as keyof Product]) === value
     })
@@ -118,7 +138,10 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
       </Suspense>
       <CatalogFilters filters={filters} />
       <div className={styles["catalog__content"]}>
-        <CatalogSort />
+        <div className={styles["catalog__toolbar"]}>
+          <CatalogFiltersMobile filters={filters} />
+          <CatalogSort />
+        </div>
         <CatalogGrid products={filteredProducts} />
       </div>
     </main>

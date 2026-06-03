@@ -41,20 +41,81 @@
     }
   }
 
-  &__range {
-    width: 100%;
-    accent-color: $orange;
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__apply {
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: $orange;
+    color: $mainWhite;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: $accentColor;
+      }
+    }
   }
 
   &__reset {
-    font-size: 14px;
+    // По размеру/форме — как «Применить», но инвертировано: белый фон, оранжевый текст.
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: $mainWhite;
     color: $orange;
-    text-decoration: underline;
+    border: 1px solid rgba($orange, 0.5); // чтобы не сливалась с белой панелью дровера
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
-    text-align: left;
+    transition: background 0.2s, border-color 0.2s;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: rgba($orange, 0.08);
+        border-color: $orange;
+      }
+    }
+  }
+}
+
+// Диапазон двумя инпутами «от — до» — общий для десктопа и дровера.
+.range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &__input {
+    width: 100%;
+    min-width: 0;
+    padding: 8px 10px;
+    font-size: 14px;
+    color: $brown;
+    background: $mainWhite;
+    border: 1px solid rgba($brown, 0.3);
+    border-radius: 8px;
+
+    &::placeholder {
+      color: rgba($brown, 0.45);
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: $orange;
+    }
+  }
+
+  &__dash {
+    flex-shrink: 0;
+    color: $brown;
+    opacity: 0.5;
   }
 }
 
@@ -64,7 +125,6 @@
 
   @media (max-width: 768px) {
     display: flex;
-    margin-bottom: 16px;
   }
 
   &__btn {
