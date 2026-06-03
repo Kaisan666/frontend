@@ -1,3 +1,4 @@
+import { z } from "zod"
 import { supabase } from "@/lib/supabase"
 import { mskDate } from "@/lib/date"
 
@@ -5,35 +6,62 @@ import { mskDate } from "@/lib/date"
 //  - "view"          — просмотр карточки товара
 //  - "time_on_page"  — время на странице (отправляется при уходе)
 //  - "booking_click" — клик по CTA «Забронировать»
+//
+// Ручка ПУБЛИЧНАЯ (без авторизации) — это трекер. Поэтому форме/размерам/
+// диапазонам присланных данных доверять нельзя: без рантайм-валидации любой
+// через DevTools зальёт мусор в events_log или накрутит просмотры (что ломает
+// сортировку по популярности и дашборд). Zod проверяет payload до записи в БД.
 
-type ViewPayload = {
-  type: "view"
-  product: { name: string; category: string; price: number }
-  session_id: string
-  device_type: string
-  referrer: string
-  applied_filters: Record<string, string>
-}
+const deviceType = z.enum(["mobile", "tablet", "desktop"])
+const sessionId = z.string().min(1).max(64)
+const productName = z.string().min(1).max(200)
+const category = z.string().min(1).max(50)
 
-type TimeOnPagePayload = {
-  type: "time_on_page"
-  product: { name: string; category: string }
-  session_id: string
-  time_on_page_ms: number
-}
-
-type BookingClickPayload = {
-  type: "booking_click"
-  session_id: string
-  device_type: string
-  source: string // 'header_desktop' | 'header_mobile' | 'event_button' | etc.
-}
-
-type EventPayload = ViewPayload | TimeOnPagePayload | BookingClickPayload
+const EventSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("view"),
+    session_id: sessionId,
+    device_type: deviceType,
+    referrer: z.string().max(2048).default(""),
+    applied_filters: z.record(z.string(), z.string()).default({}),
+    product: z.object({
+      name: productName,
+      category,
+      price: z.number().finite().min(0).max(1_000_000),
+    }),
+  }),
+  z.object({
+    type: z.literal("time_on_page"),
+    session_id: sessionId,
+    time_on_page_ms: z.number().int().min(0).max(24 * 60 * 60 * 1000), // ≤ 24ч
+    product: z.object({
+      name: productName,
+      category,
+    }),
+  }),
+  z.object({
+    type: z.literal("booking_click"),
+    session_id: sessionId,
+    device_type: deviceType,
+    source: z.string().min(1).max(50),
+  }),
+])
 
 export async function POST(request: Request) {
+  let json: unknown
   try {
-    const body = (await request.json()) as EventPayload
+    json = await request.json()
+  } catch {
+    return Response.json({ error: "Invalid JSON" }, { status: 400 })
+  }
+
+  const parsed = EventSchema.safeParse(json)
+  if (!parsed.success) {
+    return Response.json({ error: "Invalid payload" }, { status: 400 })
+  }
+  const body = parsed.data
+
+  try {
     const today = mskDate()
 
     if (body.type === "view") {
