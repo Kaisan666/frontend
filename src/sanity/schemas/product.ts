@@ -24,6 +24,19 @@ const product = {
       }
     },
     { name: 'name', title: 'Название', type: 'string' },
+    {
+      name: 'line',
+      title: 'Линейка / марка',
+      type: 'reference',
+      to: [{ type: 'productLine' }],
+      description: 'Объединяет вкусы/вариации одной марки. Соседи по линейке показываются как «Другие варианты» на странице товара.',
+    },
+    {
+      name: 'variantLabel',
+      title: 'Вариация (вкус / тип)',
+      type: 'string',
+      description: 'Короткая подпись вариации, напр. «Вишнёвое», «Апельсиновое», «Обычное».',
+    },
     { name: 'price', title: 'Цена', type: 'number' },
     { name: 'image', title: 'Фото', type: 'image', options: {
     accept: 'image/*'   // только картинки

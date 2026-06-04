@@ -19,7 +19,8 @@ const getProduct = cache(async (slug: string): Promise<Product | null> => {
     `*[_type == "product" && slug.current == $slug][0]{
       ...,
       "imageUrl": image.asset->url,
-      "style": style[]->title
+      "style": style[]->title,
+      "lineId": line->_id
     }`,
     { slug },
   );
@@ -65,8 +66,24 @@ export default async function ProductPage({ params }: PageProps) {
 
   const isBeer = product.category === "beer";
 
+  // Вариации той же линейки (марки) — «Другие варианты». Тянем только если линейка задана.
+  const variants: Product[] = product.lineId
+    ? await client.fetch(
+        `*[_type == "product" && defined(line) && line->_id == $lineId && slug.current != $slug]{
+          ...,
+          "id": _id,
+          "imageUrl": image.asset->url,
+          "slug": slug.current,
+          "style": style[]->title
+        }`,
+        { lineId: product.lineId, slug },
+      )
+    : [];
+
+  // Похожие — по стилю/категории. Исключаем товары той же линейки, чтобы вкус
+  // не дублировался между «Другими вариантами» и «Похожими».
   const similarProducts: Product[] = await client.fetch(
-    `*[_type == "product" && slug.current != $slug && (count(style[@->title in $styles]) > 0 || category == $category)][0...4]{
+    `*[_type == "product" && slug.current != $slug && (count(style[@->title in $styles]) > 0 || category == $category) && (!defined(line) || line->_id != $lineId)][0...4]{
       ...,
       "id": _id,
       "imageUrl": image.asset->url,
@@ -77,6 +94,7 @@ export default async function ProductPage({ params }: PageProps) {
       slug,
       styles: product.style ?? [],
       category: product.category,
+      lineId: product.lineId ?? null,
     },
   );
 
@@ -215,6 +233,30 @@ export default async function ProductPage({ params }: PageProps) {
           */}
         </div>
       </div>
+
+      {variants.length > 0 && (
+        <section className={styles["product-detail__similar"]}>
+          <div className="section-header">
+            <h2 className="section-header__title">Другие варианты</h2>
+          </div>
+          <div className="catalog-layout">
+            {variants.map((p) => (
+              <ProductCard
+                key={p.id}
+                id={p.id}
+                name={p.name}
+                price={p.price}
+                category={p.category}
+                imageUrl={p.imageUrl}
+                country={p.country}
+                unit={p.unit}
+                quantity={p.quantity}
+                slug={p.slug}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {similarProducts.length > 0 && (
         <section className={styles["product-detail__similar"]}>

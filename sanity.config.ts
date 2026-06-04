@@ -18,6 +18,7 @@ import homepage from "./src/sanity/schemas/homepage"
 import siteSettings from "./src/sanity/schemas/siteSettings"
 import beerStyle from "./src/sanity/schemas/beerStyle"
 import review from "./src/sanity/schemas/review"
+import productLine from "./src/sanity/schemas/productLine"
 
 const SINGLETON_TYPES = new Set(['homepage', 'siteSettings'])
 const SINGLETON_ACTIONS = new Set(['duplicate', 'delete', 'unpublish'])
@@ -28,7 +29,7 @@ export default defineConfig({
   dataset,
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema : {
-    types: [product, event, homepage, siteSettings, beerStyle, review]
+    types: [product, event, homepage, siteSettings, beerStyle, review, productLine]
   },
   document: {
     actions: (input, context) =>

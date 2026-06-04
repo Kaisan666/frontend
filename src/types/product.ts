@@ -10,6 +10,10 @@ export type Product = {
   name: string;
   category: "beer" | "food" | "other";
   price: number;
+  // Вариации: товары одной линейки (марки) с разными вкусами/типами.
+  // variantLabel — подпись вкуса; lineId — id линейки (алиас line->_id в GROQ).
+  variantLabel?: string;
+  lineId?: string;
   description?: string;
   ingredients?: string;
   calories?: number;
