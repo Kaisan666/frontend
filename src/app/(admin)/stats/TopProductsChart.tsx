@@ -11,7 +11,7 @@ import {
 
 type Datum = { name: string; category: string; views: number }
 
-export const TopProductsChart = ({ data }: { data: Datum[] }) => {
+export const TopProductsChart = ({ data, label = "Просмотры" }: { data: Datum[]; label?: string }) => {
   if (data.length === 0) {
     return <p style={{ opacity: 0.6 }}>Нет данных за выбранный период</p>
   }
@@ -50,7 +50,7 @@ export const TopProductsChart = ({ data }: { data: Datum[] }) => {
               fontSize: 13,
             }}
           />
-          <Bar dataKey="views" fill="#D65E12" radius={[0, 6, 6, 0]} name="Просмотры" />
+          <Bar dataKey="views" fill="#D65E12" radius={[0, 6, 6, 0]} name={label} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -36,6 +36,8 @@ type StatsData = {
   heatmap: number[][]
   timeDistribution: { bucket: string; count: number }[]
   bounceRate: number
+  wishlistAdds: number
+  topWishlisted: { name: string; category: string; views: number }[]
 }
 
 type FetchState = {
@@ -152,6 +154,13 @@ export default function StatsPage() {
           <section className={styles["stats__section"]}>
             <h2 className={styles["stats__section-title"]}>Время на странице</h2>
             <TimeDistributionChart data={data.timeDistribution} />
+          </section>
+
+          <section className={styles["stats__section"]}>
+            <h2 className={styles["stats__section-title"]}>
+              Избранное · всего добавлений: {data.wishlistAdds}
+            </h2>
+            <TopProductsChart data={data.topWishlisted} label="Добавления" />
           </section>
 
           <p className={styles["stats__period-info"]}>

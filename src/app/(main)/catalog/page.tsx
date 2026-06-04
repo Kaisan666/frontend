@@ -1,8 +1,10 @@
 import { Suspense } from "react"
 import { unstable_cache } from "next/cache"
+import Fuse from "fuse.js"
 import { CatalogFilters, CatalogFiltersMobile } from "@/components/Catalog/CatalogFilters"
 import { CatalogGrid } from "@/components/Catalog/CatalogGrid"
 import { CatalogSort } from "@/components/Catalog/CatalogSort"
+import { CatalogSearch } from "@/components/Catalog/CatalogSearch"
 import { FilterContextCapture } from "@/components/FilterContextCapture"
 import styles from "./catalog.module.scss"
 import { client } from "@/sanity/lib/client"
@@ -39,6 +41,7 @@ type SearchParams = {
   minPrice?: string
   maxPrice?: string
   sort?: string
+  q?: string
 }
 
 // Границы числовых фильтров (для слайдеров-диапазонов).
@@ -90,9 +93,9 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
     const k = key as keyof SearchParams
     const value = params[k]
     if (!value) continue
-    // sort — не фильтр; пропускаем, иначе цикл попытается фильтровать товары
-    // по несуществующему полю и обнулит выдачу.
-    if (k === "sort") continue
+    // sort и q — не фильтры; пропускаем, иначе цикл попытается фильтровать
+    // товары по несуществующему полю и обнулит выдачу. (q обрабатывает Fuse ниже.)
+    if (k === "sort" || k === "q") continue
 
     filteredProducts = filteredProducts.filter(product => {
       if (k === "minPrice") return product.price >= Number(value)
@@ -106,22 +109,40 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
     })
   }
 
-  // Сортировка поверх отфильтрованного. Дефолт — порядок Sanity (без sort).
-  // По названию — localeCompare('ru'), чтобы кириллица шла правильно (А, Б, В…).
+  // Поиск (fuzzy, Fuse.js) поверх отфильтрованного — до сортировки.
+  // Только по name (решение v1). normalize: регистр + ё→е, чтобы
+  // «жигулевское» находило «Жигулёвское». Индекс строим на запрос —
+  // на 30-50 товарах это бесплатно.
+  let result = filteredProducts
+  const q = params.q?.trim()
+  if (q) {
+    const normalize = (s: string) => s.toLowerCase().replace(/ё/g, "е").trim()
+    const fuse = new Fuse(result, {
+      keys: [{ name: "name", getFn: (p) => normalize(p.name) }],
+      threshold: 0.3,
+      ignoreLocation: true,
+      minMatchCharLength: 2,
+    })
+    result = fuse.search(normalize(q)).map((r) => r.item)
+  }
+
+  // Сортировка поверх результата. Дефолт — порядок Sanity, либо порядок
+  // релевантности Fuse, если активен поиск. Явный sort применяется и при
+  // поиске (пользователь его выбрал). По названию — localeCompare('ru').
   if (params.sort === "price_asc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price)
+    result = [...result].sort((a, b) => a.price - b.price)
   } else if (params.sort === "price_desc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price)
+    result = [...result].sort((a, b) => b.price - a.price)
   } else if (params.sort === "name_asc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name, "ru"))
+    result = [...result].sort((a, b) => a.name.localeCompare(b.name, "ru"))
   } else if (params.sort === "name_desc") {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.name.localeCompare(a.name, "ru"))
+    result = [...result].sort((a, b) => b.name.localeCompare(a.name, "ru"))
   } else if (params.sort === "popular") {
     // Популярность подтягиваем только под этот режим — на обычных заходах в
     // каталог лишнего запроса в Supabase нет.
     const rows = await getPopularityRows()
     const views = new Map(rows.map(r => [r.product_name, r.views]))
-    filteredProducts = [...filteredProducts].sort((a, b) => {
+    result = [...result].sort((a, b) => {
       const diff = (views.get(b.name) ?? 0) - (views.get(a.name) ?? 0)
       // Тай-брейк по имени — чтобы товары с равными (часто нулевыми)
       // просмотрами не «прыгали» от рендера к рендеру.
@@ -140,9 +161,10 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
       <div className={styles["catalog__content"]}>
         <div className={styles["catalog__toolbar"]}>
           <CatalogFiltersMobile filters={filters} />
+          <CatalogSearch />
           <CatalogSort />
         </div>
-        <CatalogGrid products={filteredProducts} />
+        <CatalogGrid products={result} />
       </div>
     </main>
   )

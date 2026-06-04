@@ -45,6 +45,15 @@ const EventSchema = z.discriminatedUnion("type", [
     device_type: deviceType,
     source: z.string().min(1).max(50),
   }),
+  z.object({
+    type: z.literal("wishlist_add"),
+    session_id: sessionId,
+    device_type: deviceType,
+    product: z.object({
+      name: productName,
+      category,
+    }),
+  }),
 ])
 
 export async function POST(request: Request) {
@@ -112,6 +121,18 @@ export async function POST(request: Request) {
         date: today,
       })
       if (error) console.error("events_log booking_click insert failed:", error.message)
+    }
+
+    if (body.type === "wishlist_add") {
+      const { error } = await supabaseAdmin.from("events_log").insert({
+        type: "wishlist_add",
+        product_name: body.product.name,
+        category: body.product.category,
+        session_id: body.session_id,
+        device_type: body.device_type,
+        date: today,
+      })
+      if (error) console.error("events_log wishlist_add insert failed:", error.message)
     }
 
     return Response.json({ ok: true })

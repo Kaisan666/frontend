@@ -26,5 +26,6 @@
 .catalog__toolbar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap; // на узких экранах поиск переносится на свою строку
   gap: 12px;
 }

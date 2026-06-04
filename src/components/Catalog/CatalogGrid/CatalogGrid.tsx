@@ -7,6 +7,14 @@ type Products = Product[]
 
 
 export const CatalogGrid = ({products}: {products: Products}) => {
+  if (!products.length) {
+    return (
+      <p className={styles['catalog-grid__empty']}>
+        Ничего не найдено. Попробуйте изменить запрос или сбросить фильтры.
+      </p>
+    )
+  }
+
   return (
     <div className={`${styles['catalog-grid']} catalog-layout`}>
       {products.map(product => (

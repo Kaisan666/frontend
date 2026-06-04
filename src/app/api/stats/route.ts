@@ -258,6 +258,21 @@ export async function GET(request: Request) {
   const bounceRate =
     sessionViewCount.size > 0 ? +(bounces / sessionViewCount.size).toFixed(3) : 0
 
+  // ---- Избранное (wishlist_add) ----
+  const wishlistRows = rows.filter((r) => r.type === "wishlist_add")
+  const wishlistAdds = wishlistRows.length
+  const wishMap = new Map<string, { category: string; views: number }>()
+  wishlistRows.forEach((r) => {
+    if (!r.product_name) return
+    const existing = wishMap.get(r.product_name)
+    if (existing) existing.views += 1
+    else wishMap.set(r.product_name, { category: r.category ?? "other", views: 1 })
+  })
+  const topWishlisted = Array.from(wishMap.entries())
+    .map(([name, info]) => ({ name, ...info }))
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 10)
+
   return Response.json({
     period: { from, to },
     totals: {
@@ -284,5 +299,7 @@ export async function GET(request: Request) {
     heatmap,
     timeDistribution,
     bounceRate,
+    wishlistAdds,
+    topWishlisted,
   })
 }

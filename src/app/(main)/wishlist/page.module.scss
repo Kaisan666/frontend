@@ -1,0 +1,20 @@
+.wishlist {
+  padding-block: 40px 80px;
+
+  &__title {
+    font-size: 40px;
+    font-weight: 700;
+    color: $brown;
+    margin-bottom: 28px;
+
+    @media screen and (max-width: $mobile) {
+      font-size: 30px;
+    }
+  }
+
+  &__empty {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba($brown, 0.7);
+  }
+}

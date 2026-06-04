@@ -1,0 +1,54 @@
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 220px; // растягивается в тулбаре; на мобилке переносится на свою строку
+}
+
+.search__icon {
+  position: absolute;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  color: rgba($brown, 0.5);
+  pointer-events: none;
+}
+
+.search__input {
+  width: 100%;
+  font-family: $openSans;
+  font-size: 15px;
+  color: $brown;
+  background-color: $mainWhite;
+  border: 1px solid rgba($brown, 0.25);
+  border-radius: 8px;
+  padding: 8px 36px; // место слева под лупу, справа под крестик
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: rgba($brown, 0.45);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: $orange;
+  }
+}
+
+.search__clear {
+  position: absolute;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba($brown, 0.5);
+  padding: 4px;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: $orange;
+  }
+}
