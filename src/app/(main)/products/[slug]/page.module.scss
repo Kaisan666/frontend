@@ -73,6 +73,51 @@
     }
   }
 
+  // Селектор вариаций (вкусов) — компактные чипы в правой колонке.
+  &__variants {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__variants-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: $brown;
+    opacity: 0.6;
+  }
+
+  &__variants-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &__variant {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba($brown, 0.3);
+    font-size: 14px;
+    color: $brown;
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        border-color: $orange;
+        color: $orange;
+      }
+    }
+
+    // текущий вкус — активный, не ссылка
+    &--active {
+      background: $accentColor;
+      border-color: $accentColor;
+      color: $mainWhite;
+      cursor: default;
+    }
+  }
+
   &__specs {
     display: grid;
     grid-template-columns: 1fr 1fr;

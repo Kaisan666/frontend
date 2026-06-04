@@ -131,6 +131,28 @@ export default async function ProductPage({ params }: PageProps) {
             </p>
           )}
 
+          {variants.length > 0 && (
+            <div className={styles["product-detail__variants"]}>
+              <span className={styles["product-detail__variants-label"]}>Варианты:</span>
+              <div className={styles["product-detail__variants-list"]}>
+                <span
+                  className={`${styles["product-detail__variant"]} ${styles["product-detail__variant--active"]}`}
+                >
+                  {product.variantLabel ?? product.name}
+                </span>
+                {variants.map((v) => (
+                  <Link
+                    key={v.id}
+                    href={`/products/${v.slug}`}
+                    className={styles["product-detail__variant"]}
+                  >
+                    {v.variantLabel ?? v.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           {isBeer && (
             <div className={styles["product-detail__specs"]}>
               {product.abv != null && (
@@ -233,30 +255,6 @@ export default async function ProductPage({ params }: PageProps) {
           */}
         </div>
       </div>
-
-      {variants.length > 0 && (
-        <section className={styles["product-detail__similar"]}>
-          <div className="section-header">
-            <h2 className="section-header__title">Другие варианты</h2>
-          </div>
-          <div className="catalog-layout">
-            {variants.map((p) => (
-              <ProductCard
-                key={p.id}
-                id={p.id}
-                name={p.name}
-                price={p.price}
-                category={p.category}
-                imageUrl={p.imageUrl}
-                country={p.country}
-                unit={p.unit}
-                quantity={p.quantity}
-                slug={p.slug}
-              />
-            ))}
-          </div>
-        </section>
-      )}
 
       {similarProducts.length > 0 && (
         <section className={styles["product-detail__similar"]}>
