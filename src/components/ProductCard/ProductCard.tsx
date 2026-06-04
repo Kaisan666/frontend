@@ -15,7 +15,11 @@ export const ProductCard = ({category, imageUrl, unit, name, price, quantity, co
             {/* next/image с fill ломает flex-центровку и навязывает position:absolute. */}
             {/* Чтобы зайти сюда с next/image как надо — нужно тянуть размеры image.asset->metadata.dimensions из Sanity. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={imageUrl} alt="" className={styles['product-card__media-img']} />
+            <img
+              src={imageUrl}
+              alt=""
+              className={`${styles['product-card__media-img']} ${category === "beer" ? styles['product-card__media-img--contain'] : ""}`}
+            />
         </div>
         <div className={styles['product-card__main']}>
           

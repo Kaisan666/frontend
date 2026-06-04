@@ -160,8 +160,10 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
       <CatalogFilters filters={filters} />
       <div className={styles["catalog__content"]}>
         <div className={styles["catalog__toolbar"]}>
-          <CatalogFiltersMobile filters={filters} />
+          {/* Поиск первым в DOM: на мобилке он занимает всю первую строку
+              (flex-basis 100%), «Фильтры» + сортировка переносятся на вторую. */}
           <CatalogSearch />
+          <CatalogFiltersMobile filters={filters} />
           <CatalogSort />
         </div>
         <CatalogGrid products={result} />

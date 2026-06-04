@@ -2,7 +2,12 @@
   position: relative;
   display: flex;
   align-items: center;
-  flex: 1 1 220px; // растягивается в тулбаре; на мобилке переносится на свою строку
+  flex: 1 1 220px; // растягивается в тулбаре
+
+  // на мобилке — вся первая строка тулбара (Фильтры + сортировка уходят вниз)
+  @media (max-width: $mobile) {
+    flex-basis: 100%;
+  }
 }
 
 .search__icon {

@@ -28,6 +28,8 @@ type StatsResponse = {
   topFilters: { key: string; value: string; count: number }[]
   newVsReturning: { new: number; returning: number }
   bounceRate: number
+  wishlistAdds: number
+  topWishlisted: { name: string; category: string; views: number }[]
 }
 
 const PERIOD_LABEL: Record<Period, string> = {
@@ -59,6 +61,10 @@ function buildPrompt(stats: StatsResponse, period: Period): string {
     .slice(0, 5)
     .map((f) => `${f.key}=${f.value} (${f.count})`)
     .join(", ")
+  const topWish = stats.topWishlisted
+    .slice(0, 5)
+    .map((p) => `${p.name} (${p.category}): ${p.views}`)
+    .join("\n  - ")
 
   const deltaViews =
     stats.previous.views > 0
@@ -74,6 +80,7 @@ function buildPrompt(stats: StatsResponse, period: Period): string {
 - Кликов «Забронировать»: ${stats.totals.bookingClicks}
 - Конверсия в клик «Забронировать»: ${(stats.totals.conversionRate * 100).toFixed(1)}%
 - Bounce rate (просмотр одной страницы): ${(stats.bounceRate * 100).toFixed(1)}%
+- Добавлений в избранное (сигнал интереса, заказов на сайте нет): ${stats.wishlistAdds}
 
 Сравнение с предыдущим аналогичным периодом:
 - Просмотров было: ${stats.previous.views} (изменение: ${deltaViews})
@@ -97,6 +104,9 @@ function buildPrompt(stats: StatsResponse, period: Period): string {
   - ${bottomProds || "нет данных"}
 
 Топ-5 применённых фильтров: ${filters || "нет данных"}
+
+Топ-5 товаров по добавлениям в избранное:
+  - ${topWish || "нет данных"}
 
 Составь развёрнутый аналитический отчёт по этим данным для владельца пивного бара Shengen+. Структура:
 # Ключевые выводы

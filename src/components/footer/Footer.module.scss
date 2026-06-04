@@ -38,6 +38,20 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        margin-top: 12px;
+
+        // Телефон — белый, как и весь футер; на hover чуть подсвечиваем
+        // акцентом, чтобы читалось как ссылка.
+        a {
+          color: $mainWhite;
+          font-weight: 600;
+          text-decoration: none;
+          transition: color 0.15s ease;
+
+          &:hover {
+            color: $orange;
+          }
+        }
       }
     }
   }
