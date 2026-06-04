@@ -27,6 +27,7 @@ type ChipGroup = {
   label: string
   values: string[]
   formatValue?: (v: string) => string
+  beerOnly?: boolean
 }
 
 type RangeGroup = {
@@ -37,12 +38,14 @@ type RangeGroup = {
   step: number
   suffix: string
   bounds: Range
+  beerOnly?: boolean
 }
 
+// beerOnly помечает пивные измерения — скрытие/очистка/авто-пиво выводятся отсюда.
 const RANGE_DEFS = [
-  { key: "abv", label: "Крепость (ABV)", minParam: "abvMin", maxParam: "abvMax", step: 0.1, suffix: "%" },
-  { key: "ibu", label: "Горечь (IBU)", minParam: "ibuMin", maxParam: "ibuMax", step: 1, suffix: "" },
-  { key: "price", label: "Цена", minParam: "minPrice", maxParam: "maxPrice", step: 10, suffix: " ₽" },
+  { key: "abv", label: "Крепость (ABV)", minParam: "abvMin", maxParam: "abvMax", step: 0.1, suffix: "%", beerOnly: true },
+  { key: "ibu", label: "Горечь (IBU)", minParam: "ibuMin", maxParam: "ibuMax", step: 1, suffix: "", beerOnly: true },
+  { key: "price", label: "Цена", minParam: "minPrice", maxParam: "maxPrice", step: 10, suffix: " ₽", beerOnly: false },
 ] as const
 
 const RANGE_CONDITIONS: Record<string, string> = {
@@ -54,17 +57,63 @@ const RANGE_CONDITIONS: Record<string, string> = {
   maxPrice: "price <= $maxPrice",
 }
 
+// Дефиниции чип-фильтров: значения тянем из данных каталога, beerOnly помечает
+// пивные измерения. Единственное место, где объявляется чип-фильтр.
+const CHIP_DEFS: {
+  key: string
+  label: string
+  values: (f: CatalogFiltersData) => string[]
+  formatValue?: (v: string) => string
+  beerOnly?: boolean
+}[] = [
+  { key: "category", label: "Категория", values: (f) => f.categories, formatValue: (v) => categoryLabels[v] ?? v },
+  { key: "style", label: "Стиль", values: (f) => f.styles, beerOnly: true },
+  { key: "country", label: "Страна", values: (f) => f.country, beerOnly: true },
+]
+
 function buildChipGroups(f: CatalogFiltersData): ChipGroup[] {
-  return [
-    { key: "category", label: "Категория", values: f.categories, formatValue: (v) => categoryLabels[v] ?? v },
-    { key: "style", label: "Стиль", values: f.styles },
-    { key: "country", label: "Страна", values: f.country },
-  ]
+  return CHIP_DEFS.map((d) => ({
+    key: d.key,
+    label: d.label,
+    values: d.values(f),
+    formatValue: d.formatValue,
+    beerOnly: d.beerOnly,
+  }))
 }
 
 // Диапазон не нужен, если значение одно (min == max) — отфильтровываем.
 function buildRangeGroups(f: CatalogFiltersData): RangeGroup[] {
   return RANGE_DEFS.map((d) => ({ ...d, bounds: f[d.key] })).filter((g) => g.bounds.max > g.bounds.min)
+}
+
+// ---- Контекстные фильтры по категории ----
+// Пивные измерения помечены `beerOnly` в CHIP_DEFS/RANGE_DEFS — единственный
+// источник правды. Для «Еда»/«Остальное» прячем их и сносим из URL; выбор пивного
+// фильтра без категории → авто «Пиво». Список пивных URL-параметров выводим из
+// дефиниций — добавил новый beerOnly-фильтр, и всё подхватывается само.
+const BEER_PARAM_KEYS: string[] = [
+  ...CHIP_DEFS.filter((d) => d.beerOnly).map((d) => d.key),
+  ...RANGE_DEFS.filter((d) => d.beerOnly).flatMap((d) => [d.minParam, d.maxParam]),
+]
+
+const isNonBeer = (cat: string | null | undefined) => !!cat && cat !== "beer"
+
+function visibleChipGroups(groups: ChipGroup[], cat: string | null | undefined): ChipGroup[] {
+  return isNonBeer(cat) ? groups.filter((g) => !g.beerOnly) : groups
+}
+function visibleRangeGroups(groups: RangeGroup[], cat: string | null | undefined): RangeGroup[] {
+  return isNonBeer(cat) ? groups.filter((g) => !g.beerOnly) : groups
+}
+
+// Приводит набор параметров к согласованному виду: не-пиво → без пивных фильтров;
+// пивной фильтр без категории → category=beer. Мутирует переданный URLSearchParams.
+function applyBeerRules(params: URLSearchParams) {
+  const cat = params.get("category")
+  if (cat && cat !== "beer") {
+    BEER_PARAM_KEYS.forEach((k) => params.delete(k))
+  } else if (!cat && BEER_PARAM_KEYS.some((k) => params.has(k))) {
+    params.set("category", "beer")
+  }
 }
 
 const normalizeRangeValue = (s?: string): string | null => {
@@ -108,6 +157,55 @@ async function fetchCount(pending: Record<string, string>): Promise<number> {
 
 // ---- Презентационные части (общие для десктопа и дровера) ----
 
+// Сколько значений показывать в группе до сворачивания. Кнопка «Показать ещё»
+// появляется только если значений больше — иначе список как был.
+const CHIP_VISIBLE_LIMIT = 8
+
+function ChipGroupItem({
+  group,
+  isActive,
+  onToggle,
+}: {
+  group: ChipGroup
+  isActive: (key: string, value: string) => boolean
+  onToggle: (key: string, value: string) => void
+}) {
+  const overflow = group.values.length - CHIP_VISIBLE_LIMIT
+  // Если активное значение спрятано под лимитом — сразу разворачиваем,
+  // чтобы выбранный фильтр не «исчезал» (например, при заходе по ссылке).
+  const hasHiddenActive =
+    overflow > 0 && group.values.slice(CHIP_VISIBLE_LIMIT).some((v) => isActive(group.key, v))
+  const [expanded, setExpanded] = useState(hasHiddenActive)
+
+  const shown = expanded ? group.values : group.values.slice(0, CHIP_VISIBLE_LIMIT)
+
+  return (
+    <div className={styles["filters__group"]}>
+      <h3 className={styles["filters__title"]}>{group.label}</h3>
+      <div className={styles["filters__tags"]}>
+        {shown.map((value) => (
+          <button
+            key={value}
+            onClick={() => onToggle(group.key, value)}
+            className={`${styles["filters__tag"]} ${isActive(group.key, value) ? styles["filters__tag--active"] : ""}`}
+          >
+            {group.formatValue ? group.formatValue(value) : value}
+          </button>
+        ))}
+      </div>
+      {overflow > 0 && (
+        <button
+          type="button"
+          className={styles["filters__more"]}
+          onClick={() => setExpanded((e) => !e)}
+        >
+          {expanded ? "Свернуть" : `Показать ещё ${overflow}`}
+        </button>
+      )}
+    </div>
+  )
+}
+
 function ChipGroups({
   groups,
   isActive,
@@ -121,20 +219,7 @@ function ChipGroups({
     <>
       {groups.map((group) =>
         group.values.length === 0 ? null : (
-          <div key={group.key} className={styles["filters__group"]}>
-            <h3 className={styles["filters__title"]}>{group.label}</h3>
-            <div className={styles["filters__tags"]}>
-              {group.values.map((value) => (
-                <button
-                  key={value}
-                  onClick={() => onToggle(group.key, value)}
-                  className={`${styles["filters__tag"]} ${isActive(group.key, value) ? styles["filters__tag--active"] : ""}`}
-                >
-                  {group.formatValue ? group.formatValue(value) : value}
-                </button>
-              ))}
-            </div>
-          </div>
+          <ChipGroupItem key={group.key} group={group} isActive={isActive} onToggle={onToggle} />
         )
       )}
     </>
@@ -217,12 +302,14 @@ export const CatalogFilters = ({ filters }: { filters: CatalogFiltersData }) => 
     const params = new URLSearchParams(searchParams.toString())
     if (params.get(key) === value) params.delete(key)
     else params.set(key, value)
+    applyBeerRules(params)
     router.push(`${pathname}?${params.toString()}`)
   }
 
   const applyRanges = () => {
     const params = new URLSearchParams(searchParams.toString())
     rangeGroups.forEach((g) => applyRange(params, g, rangeDraft[g.minParam], rangeDraft[g.maxParam]))
+    applyBeerRules(params)
     router.push(`${pathname}?${params.toString()}`)
   }
 
@@ -241,9 +328,13 @@ export const CatalogFilters = ({ filters }: { filters: CatalogFiltersData }) => 
 
   return (
     <aside className={styles["filters"]}>
-      <ChipGroups groups={chipGroups} isActive={(k, v) => searchParams.get(k) === v} onToggle={toggleChip} />
+      <ChipGroups
+        groups={visibleChipGroups(chipGroups, searchParams.get("category"))}
+        isActive={(k, v) => searchParams.get(k) === v}
+        onToggle={toggleChip}
+      />
 
-      {rangeGroups.map((g) => (
+      {visibleRangeGroups(rangeGroups, searchParams.get("category")).map((g) => (
         <RangeFilter
           key={g.key}
           group={g}
@@ -297,10 +388,14 @@ export const CatalogFiltersMobile = ({ filters }: { filters: CatalogFiltersData 
   }
 
   const togglePendingChip = async (key: string, value: string) => {
-    const next =
+    const raw: Record<string, string> =
       pending[key] === value
         ? Object.fromEntries(Object.entries(pending).filter(([k]) => k !== key))
         : { ...pending, [key]: value }
+    // те же контекстные правила, что и на десктопе (через URLSearchParams)
+    const params = new URLSearchParams(raw)
+    applyBeerRules(params)
+    const next = Object.fromEntries(params.entries())
     setPending(next)
     setFoundCount(await fetchCount(next))
   }
@@ -320,6 +415,7 @@ export const CatalogFiltersMobile = ({ filters }: { filters: CatalogFiltersData 
       if (pending[k]) params.set(k, pending[k])
     })
     rangeGroups.forEach((g) => applyRange(params, g, pending[g.minParam], pending[g.maxParam]))
+    applyBeerRules(params)
     router.push(`${pathname}?${params.toString()}`)
     setIsOpen(false)
   }
@@ -351,8 +447,12 @@ export const CatalogFiltersMobile = ({ filters }: { filters: CatalogFiltersData 
                 </button>
               </div>
               <div className={styles["drawer__content"]}>
-                <ChipGroups groups={chipGroups} isActive={(k, v) => pending[k] === v} onToggle={togglePendingChip} />
-                {rangeGroups.map((g) => (
+                <ChipGroups
+                  groups={visibleChipGroups(chipGroups, pending["category"])}
+                  isActive={(k, v) => pending[k] === v}
+                  onToggle={togglePendingChip}
+                />
+                {visibleRangeGroups(rangeGroups, pending["category"]).map((g) => (
                   <RangeFilter
                     key={g.key}
                     group={g}
