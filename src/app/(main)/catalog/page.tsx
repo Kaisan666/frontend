@@ -38,10 +38,13 @@ type SearchParams = {
   abvMax?: string
   ibuMin?: string
   ibuMax?: string
+  plMin?: string
+  plMax?: string
   minPrice?: string
   maxPrice?: string
   sort?: string
   q?: string
+  foodType?: string
 }
 
 // Границы числовых фильтров (для слайдеров-диапазонов).
@@ -67,7 +70,8 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
         "id": _id,
         "imageUrl": image.asset->url,
         "slug": slug.current,
-        "style": style[]->title
+        "style": style[]->title,
+        "foodType": foodType->title
       }
     `),
     client.fetch<string[]>(`*[_type == "beerStyle"] | order(title asc).title`),
@@ -75,14 +79,17 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
 
   const abvVals = products.map(p => p.abv).filter((v): v is number => v != null)
   const ibuVals = products.map(p => p.ibu).filter((v): v is number => v != null)
+  const plVals = products.map(p => p.pl).filter((v): v is number => v != null)
   const priceVals = products.map(p => p.price).filter((v): v is number => v != null)
 
   const filters = {
     categories: [...new Set(products.map(p => p.category).filter(Boolean))] as string[],
     styles: beerStyles,
     country: [...new Set(products.map(p => p.country).filter(Boolean))] as string[],
+    foodType: [...new Set(products.map(p => p.foodType).filter(Boolean))] as string[],
     abv: numBounds(abvVals, 1),
     ibu: numBounds(ibuVals, 1),
+    pl: numBounds(plVals, 1),
     price: numBounds(priceVals, 10),
   }
 
@@ -104,6 +111,8 @@ export default async function CatalogPage({ searchParams }: PageSearchProps) {
       if (k === "abvMax") return product.abv != null && product.abv <= Number(value)
       if (k === "ibuMin") return product.ibu != null && product.ibu >= Number(value)
       if (k === "ibuMax") return product.ibu != null && product.ibu <= Number(value)
+      if (k === "plMin") return product.pl != null && product.pl >= Number(value)
+      if (k === "plMax") return product.pl != null && product.pl <= Number(value)
       if (k === "style") return product.style?.includes(value) ?? false
       return String(product[k as keyof Product]) === value
     })

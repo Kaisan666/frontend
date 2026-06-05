@@ -15,6 +15,8 @@ export type Product = {
   variantLabel?: string;
   lineId?: string;
   description?: string;
+  // foodType — тип/категория еды (дереференс foodCategory->title в GROQ).
+  foodType?: string;
   ingredients?: string;
   calories?: number;
   protein?: number;

@@ -56,6 +56,14 @@ const product = {
       }
     },
     // только еда
+    {
+      name: 'foodType',
+      title: 'Тип еды',
+      type: 'reference',
+      to: [{ type: 'foodCategory' }],
+      hidden: onlyFor('food'),
+      description: 'Категория блюда (закуски, горячее…). Используется фильтром каталога.',
+    },
     { name: 'ingredients', title: 'Состав', type: 'text', hidden: onlyFor('food') },
     // питательная ценность
     {

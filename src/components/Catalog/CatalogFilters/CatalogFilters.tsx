@@ -6,13 +6,16 @@ import { client } from "@/sanity/lib/client"
 import styles from "./CatalogFilters.module.scss"
 
 type Range = { min: number; max: number }
+type CatScope = "beer" | "food"
 
 export type CatalogFiltersData = {
   categories: string[]
   styles: string[]
   country: string[]
+  foodType: string[]
   abv: Range
   ibu: Range
+  pl: Range
   price: Range
 }
 
@@ -27,48 +30,61 @@ type ChipGroup = {
   label: string
   values: string[]
   formatValue?: (v: string) => string
-  beerOnly?: boolean
+  onlyCategory?: CatScope
 }
 
 type RangeGroup = {
-  key: "abv" | "ibu" | "price"
+  key: "abv" | "ibu" | "pl" | "price"
   label: string
   minParam: string
   maxParam: string
   step: number
   suffix: string
   bounds: Range
-  beerOnly?: boolean
+  onlyCategory?: CatScope
 }
 
-// beerOnly помечает пивные измерения — скрытие/очистка/авто-пиво выводятся отсюда.
-const RANGE_DEFS = [
-  { key: "abv", label: "Крепость (ABV)", minParam: "abvMin", maxParam: "abvMax", step: 0.1, suffix: "%", beerOnly: true },
-  { key: "ibu", label: "Горечь (IBU)", minParam: "ibuMin", maxParam: "ibuMax", step: 1, suffix: "", beerOnly: true },
-  { key: "price", label: "Цена", minParam: "minPrice", maxParam: "maxPrice", step: 10, suffix: " ₽", beerOnly: false },
-] as const
+// onlyCategory помечает измерения, относящиеся к конкретной категории
+// (скрытие/очистка/авто-категория выводятся отсюда). Цена — общая (без onlyCategory).
+const RANGE_DEFS: {
+  key: "abv" | "ibu" | "pl" | "price"
+  label: string
+  minParam: string
+  maxParam: string
+  step: number
+  suffix: string
+  onlyCategory?: CatScope
+}[] = [
+  { key: "abv", label: "Крепость (ABV)", minParam: "abvMin", maxParam: "abvMax", step: 0.1, suffix: "%", onlyCategory: "beer" },
+  { key: "ibu", label: "Горечь (IBU)", minParam: "ibuMin", maxParam: "ibuMax", step: 1, suffix: "", onlyCategory: "beer" },
+  { key: "pl", label: "Плотность (°P)", minParam: "plMin", maxParam: "plMax", step: 0.5, suffix: "°P", onlyCategory: "beer" },
+  { key: "price", label: "Цена", minParam: "minPrice", maxParam: "maxPrice", step: 10, suffix: " ₽" },
+]
 
 const RANGE_CONDITIONS: Record<string, string> = {
   abvMin: "abv >= $abvMin",
   abvMax: "abv <= $abvMax",
   ibuMin: "ibu >= $ibuMin",
   ibuMax: "ibu <= $ibuMax",
+  plMin: "pl >= $plMin",
+  plMax: "pl <= $plMax",
   minPrice: "price >= $minPrice",
   maxPrice: "price <= $maxPrice",
 }
 
-// Дефиниции чип-фильтров: значения тянем из данных каталога, beerOnly помечает
-// пивные измерения. Единственное место, где объявляется чип-фильтр.
+// Дефиниции чип-фильтров: значения тянем из данных каталога, onlyCategory привязывает
+// измерение к категории. Единственное место, где объявляется чип-фильтр.
 const CHIP_DEFS: {
   key: string
   label: string
   values: (f: CatalogFiltersData) => string[]
   formatValue?: (v: string) => string
-  beerOnly?: boolean
+  onlyCategory?: CatScope
 }[] = [
   { key: "category", label: "Категория", values: (f) => f.categories, formatValue: (v) => categoryLabels[v] ?? v },
-  { key: "style", label: "Стиль", values: (f) => f.styles, beerOnly: true },
-  { key: "country", label: "Страна", values: (f) => f.country, beerOnly: true },
+  { key: "style", label: "Стиль", values: (f) => f.styles, onlyCategory: "beer" },
+  { key: "country", label: "Страна", values: (f) => f.country, onlyCategory: "beer" },
+  { key: "foodType", label: "Тип", values: (f) => f.foodType, onlyCategory: "food" },
 ]
 
 function buildChipGroups(f: CatalogFiltersData): ChipGroup[] {
@@ -77,7 +93,7 @@ function buildChipGroups(f: CatalogFiltersData): ChipGroup[] {
     label: d.label,
     values: d.values(f),
     formatValue: d.formatValue,
-    beerOnly: d.beerOnly,
+    onlyCategory: d.onlyCategory,
   }))
 }
 
@@ -87,32 +103,38 @@ function buildRangeGroups(f: CatalogFiltersData): RangeGroup[] {
 }
 
 // ---- Контекстные фильтры по категории ----
-// Пивные измерения помечены `beerOnly` в CHIP_DEFS/RANGE_DEFS — единственный
-// источник правды. Для «Еда»/«Остальное» прячем их и сносим из URL; выбор пивного
-// фильтра без категории → авто «Пиво». Список пивных URL-параметров выводим из
-// дефиниций — добавил новый beerOnly-фильтр, и всё подхватывается само.
-const BEER_PARAM_KEYS: string[] = [
-  ...CHIP_DEFS.filter((d) => d.beerOnly).map((d) => d.key),
-  ...RANGE_DEFS.filter((d) => d.beerOnly).flatMap((d) => [d.minParam, d.maxParam]),
+// Измерения с onlyCategory (CHIP_DEFS/RANGE_DEFS) относятся к своей категории —
+// единственный источник правды. Карта «URL-параметр → категория» выводится из
+// дефиниций; добавил новый onlyCategory-фильтр — скрытие/очистка/авто-категория
+// подхватываются сами.
+const SCOPED_PARAMS: { param: string; cat: CatScope }[] = [
+  ...CHIP_DEFS.filter((d) => d.onlyCategory).map((d) => ({ param: d.key, cat: d.onlyCategory as CatScope })),
+  ...RANGE_DEFS.filter((d) => d.onlyCategory).flatMap((d) => [
+    { param: d.minParam, cat: d.onlyCategory as CatScope },
+    { param: d.maxParam, cat: d.onlyCategory as CatScope },
+  ]),
 ]
 
-const isNonBeer = (cat: string | null | undefined) => !!cat && cat !== "beer"
-
+// Группа видна, если у неё нет привязки, либо категория не выбрана, либо совпадает.
 function visibleChipGroups(groups: ChipGroup[], cat: string | null | undefined): ChipGroup[] {
-  return isNonBeer(cat) ? groups.filter((g) => !g.beerOnly) : groups
+  return groups.filter((g) => !g.onlyCategory || !cat || cat === g.onlyCategory)
 }
 function visibleRangeGroups(groups: RangeGroup[], cat: string | null | undefined): RangeGroup[] {
-  return isNonBeer(cat) ? groups.filter((g) => !g.beerOnly) : groups
+  return groups.filter((g) => !g.onlyCategory || !cat || cat === g.onlyCategory)
 }
 
-// Приводит набор параметров к согласованному виду: не-пиво → без пивных фильтров;
-// пивной фильтр без категории → category=beer. Мутирует переданный URLSearchParams.
-function applyBeerRules(params: URLSearchParams) {
+// Согласует параметры: выбрана категория → сносим параметры фильтров ЧУЖИХ
+// категорий; категория не выбрана, но есть привязанный фильтр → ставим его категорию.
+// Мутирует переданный URLSearchParams.
+function applyCategoryRules(params: URLSearchParams) {
   const cat = params.get("category")
-  if (cat && cat !== "beer") {
-    BEER_PARAM_KEYS.forEach((k) => params.delete(k))
-  } else if (!cat && BEER_PARAM_KEYS.some((k) => params.has(k))) {
-    params.set("category", "beer")
+  if (cat) {
+    SCOPED_PARAMS.forEach(({ param, cat: scope }) => {
+      if (scope !== cat) params.delete(param)
+    })
+  } else {
+    const hit = SCOPED_PARAMS.find(({ param }) => params.has(param))
+    if (hit) params.set("category", hit.cat)
   }
 }
 
@@ -142,6 +164,9 @@ async function fetchCount(pending: Record<string, string>): Promise<number> {
     if (k === "style") {
       conditions.push(`$style in style[]->title`)
       params.style = v
+    } else if (k === "foodType") {
+      conditions.push(`foodType->title == $foodType`)
+      params.foodType = v
     } else if (RANGE_CONDITIONS[k]) {
       conditions.push(RANGE_CONDITIONS[k])
       params[k] = Number(v)
@@ -302,14 +327,14 @@ export const CatalogFilters = ({ filters }: { filters: CatalogFiltersData }) => 
     const params = new URLSearchParams(searchParams.toString())
     if (params.get(key) === value) params.delete(key)
     else params.set(key, value)
-    applyBeerRules(params)
+    applyCategoryRules(params)
     router.push(`${pathname}?${params.toString()}`)
   }
 
   const applyRanges = () => {
     const params = new URLSearchParams(searchParams.toString())
     rangeGroups.forEach((g) => applyRange(params, g, rangeDraft[g.minParam], rangeDraft[g.maxParam]))
-    applyBeerRules(params)
+    applyCategoryRules(params)
     router.push(`${pathname}?${params.toString()}`)
   }
 
@@ -394,7 +419,7 @@ export const CatalogFiltersMobile = ({ filters }: { filters: CatalogFiltersData 
         : { ...pending, [key]: value }
     // те же контекстные правила, что и на десктопе (через URLSearchParams)
     const params = new URLSearchParams(raw)
-    applyBeerRules(params)
+    applyCategoryRules(params)
     const next = Object.fromEntries(params.entries())
     setPending(next)
     setFoundCount(await fetchCount(next))
@@ -415,7 +440,7 @@ export const CatalogFiltersMobile = ({ filters }: { filters: CatalogFiltersData 
       if (pending[k]) params.set(k, pending[k])
     })
     rangeGroups.forEach((g) => applyRange(params, g, pending[g.minParam], pending[g.maxParam]))
-    applyBeerRules(params)
+    applyCategoryRules(params)
     router.push(`${pathname}?${params.toString()}`)
     setIsOpen(false)
   }
