@@ -71,6 +71,14 @@ function buildPrompt(stats: StatsResponse, period: Period): string {
       ? `${(((stats.totals.views - stats.previous.views) / stats.previous.views) * 100).toFixed(1)}%`
       : "—"
 
+  // Доли по устройствам: модели проще читать «64%», чем сырой счётчик.
+  const deviceTotal =
+    stats.devices.mobile + stats.devices.tablet + stats.devices.desktop
+  const deviceShare = (count: number): string => {
+    if (deviceTotal === 0) return "—"
+    return `${Math.round((count / deviceTotal) * 100)}%`
+  }
+
   return `Период анализа: ${PERIOD_LABEL[period]} (${stats.period.from} – ${stats.period.to})
 
 Сводные метрики за период:
@@ -87,9 +95,9 @@ function buildPrompt(stats: StatsResponse, period: Period): string {
 - Сессий было: ${stats.previous.uniqueSessions}
 
 Распределение по устройствам:
-- Мобильные: ${stats.devices.mobile}
-- Планшеты: ${stats.devices.tablet}
-- Десктоп: ${stats.devices.desktop}
+- Мобильные: ${stats.devices.mobile} (${deviceShare(stats.devices.mobile)})
+- Планшеты: ${stats.devices.tablet} (${deviceShare(stats.devices.tablet)})
+- Десктоп: ${stats.devices.desktop} (${deviceShare(stats.devices.desktop)})
 
 Новые vs возвращающиеся сессии:
 - Новые: ${stats.newVsReturning.new}

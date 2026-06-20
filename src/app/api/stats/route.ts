@@ -67,9 +67,23 @@ function getMskDayAndHour(iso: string): [number, number] {
 
 type Aggregates = ReturnType<typeof aggregate>
 
+// Отсев выбросов «время на странице». Браузер засчитывает забытую открытую
+// вкладку целиком при закрытии (часы) — такой замер не отражает реальный
+// интерес и раздувает среднее. Решаем, какой замер считать правдоподобным.
+function isRealisticTimeOnPage(ms: number): boolean {
+  // Ниже 1с — случайный «моргнул и ушёл», выше 5 мин — забытая открытая
+  // вкладка (на карточке товара столько информации нет).
+  return ms >= 1_000 && ms <= 5 * 60 * 1_000
+}
+
 function aggregate(rows: Row[]) {
   const views = rows.filter((r) => r.type === "view")
-  const timeRows = rows.filter((r) => r.type === "time_on_page" && r.time_on_page_ms != null)
+  const timeRows = rows.filter(
+    (r) =>
+      r.type === "time_on_page" &&
+      r.time_on_page_ms != null &&
+      isRealisticTimeOnPage(r.time_on_page_ms)
+  )
   const bookings = rows.filter((r) => r.type === "booking_click")
 
   const uniqueSessions = new Set(rows.map((r) => r.session_id)).size
@@ -83,8 +97,12 @@ function aggregate(rows: Row[]) {
         )
       : 0
 
+  // Конверсия = доля сессий, где был хотя бы один клик «Забронировать»,
+  // а НЕ общее число кликов / сессии (иначе один человек, накликавший
+  // кнопку N раз, надувает метрику выше 100%).
+  const sessionsWithBooking = new Set(bookings.map((r) => r.session_id)).size
   const conversionRate =
-    uniqueSessions > 0 ? +(bookings.length / uniqueSessions).toFixed(3) : 0
+    uniqueSessions > 0 ? +(sessionsWithBooking / uniqueSessions).toFixed(3) : 0
 
   return {
     views: views.length,
